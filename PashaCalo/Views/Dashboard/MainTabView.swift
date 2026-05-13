@@ -18,11 +18,7 @@ struct MainTabView: View {
                 case 3:
                     GroupsView()
                 case 4:
-                    PlaceholderTabView(
-                        iconName: "person.fill",
-                        title: "プロフィール",
-                        subtitle: "アカウントと目標設定を管理します"
-                    )
+                    ProfileView()
                 default:
                     DashboardView()
                 }
@@ -121,34 +117,6 @@ struct MainTabView: View {
         showLoggedToast = true
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             showLoggedToast = false
-        }
-    }
-}
-
-private struct PlaceholderTabView: View {
-    let iconName: String
-    let title: String
-    let subtitle: String
-
-    var body: some View {
-        ZStack {
-            Color("AppBackground").ignoresSafeArea()
-
-            VStack(spacing: 12) {
-                Image(systemName: iconName)
-                    .font(.system(size: 36))
-                    .foregroundStyle(Color("TextTertiary"))
-
-                Text(title)
-                    .font(.custom("NotoSansJP-Bold", size: 22))
-                    .foregroundStyle(Color("AccentBlack"))
-
-                Text(subtitle)
-                    .font(.custom("NotoSansJP-Regular", size: 14))
-                    .foregroundStyle(Color("TextSecondary"))
-                    .multilineTextAlignment(.center)
-            }
-            .padding(.horizontal, 24)
         }
     }
 }
