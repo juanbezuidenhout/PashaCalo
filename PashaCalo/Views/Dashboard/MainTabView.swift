@@ -16,11 +16,7 @@ struct MainTabView: View {
                 case 1:
                     ProgressView()
                 case 3:
-                    PlaceholderTabView(
-                        iconName: "person.2.fill",
-                        title: "グループ",
-                        subtitle: "仲間と一緒に続けるためのグループ機能"
-                    )
+                    GroupsView()
                 case 4:
                     PlaceholderTabView(
                         iconName: "person.fill",
