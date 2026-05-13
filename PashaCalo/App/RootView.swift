@@ -9,7 +9,15 @@ struct RootView: View {
                 .ignoresSafeArea()
 
             Group {
-                if !appState.isOnboardingComplete {
+                if !appState.hasFinishedSplash {
+                    SplashView {
+                        appState.completeSplash()
+                    }
+                    .transition(rootTransition)
+                } else if !appState.hasFinishedWelcome {
+                    WelcomeView()
+                        .transition(rootTransition)
+                } else if !appState.isOnboardingComplete {
                     OnboardingFlowView()
                         .transition(rootTransition)
                 } else if !appState.isAuthenticated {
@@ -23,6 +31,8 @@ struct RootView: View {
                         .transition(rootTransition)
                 }
             }
+            .animation(.easeInOut(duration: 0.35), value: appState.hasFinishedSplash)
+            .animation(.easeInOut(duration: 0.35), value: appState.hasFinishedWelcome)
             .animation(.easeInOut(duration: 0.35), value: appState.isOnboardingComplete)
             .animation(.easeInOut(duration: 0.35), value: appState.isAuthenticated)
             .animation(.easeInOut(duration: 0.35), value: appState.hasSeenPaywall)
