@@ -3,6 +3,7 @@ import SwiftUI
 struct MainTabView: View {
     @State private var selectedTab: Int = 0
     @State private var showFoodLog: Bool = false
+    @State private var showLoggedToast: Bool = false
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -37,9 +38,11 @@ struct MainTabView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 
             customTabBar
+
+            toastLayer
         }
         .sheet(isPresented: $showFoodLog) {
-            FoodLogView()
+            FoodLogView(onLogged: presentLoggedToast)
         }
     }
 
@@ -95,6 +98,38 @@ struct MainTabView: View {
         }
         .buttonStyle(.plain)
         .frame(maxWidth: .infinity)
+    }
+
+    // MARK: - Toast
+
+    private var toastLayer: some View {
+        VStack {
+            Spacer()
+            if showLoggedToast {
+                Text("記録しました")
+                    .font(.custom("NotoSansJP-SemiBold", size: 14))
+                    .foregroundStyle(Color("AccentBlack"))
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            .fill(Color("CardBackground"))
+                    )
+                    .shadow(color: .black.opacity(0.12), radius: 12, x: 0, y: 6)
+                    .padding(.bottom, 96)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .allowsHitTesting(false)
+        .animation(.spring(response: 0.4, dampingFraction: 0.85), value: showLoggedToast)
+    }
+
+    private func presentLoggedToast() {
+        showLoggedToast = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            showLoggedToast = false
+        }
     }
 }
 
