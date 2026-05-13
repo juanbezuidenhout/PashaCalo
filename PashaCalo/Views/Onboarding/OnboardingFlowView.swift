@@ -27,6 +27,14 @@ struct OnboardingFlowView: View {
                         OnboardingDiscoveryView(onNext: advance)
                     case 5:
                         OnboardingPreviousAppView(onNext: advance)
+                    case 6:
+                        OnboardingGraphView(onNext: advance)
+                    case 7:
+                        OnboardingHeightWeightView(onNext: advance)
+                    case 8:
+                        OnboardingGoalWeightView(onNext: advance)
+                    case 9:
+                        OnboardingCompleteView()
                     default:
                         placeholder
                     }
