@@ -9,6 +9,7 @@ final class AppState: ObservableObject {
     @Published var isAuthenticated: Bool = false
     @Published var hasSeenPaywall: Bool = false
     @Published var isSubscribed: Bool = false
+    @Published var userProfile: UserProfile? = nil
 
     func completeSplash() {
         hasFinishedSplash = true

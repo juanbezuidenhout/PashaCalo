@@ -136,7 +136,7 @@ struct FoodLogView: View {
         VStack(spacing: 20) {
             Spacer()
 
-            ProgressView()
+            SwiftUI.ProgressView()
                 .progressViewStyle(.circular)
                 .scaleEffect(1.8)
                 .tint(Color("AccentBlack"))

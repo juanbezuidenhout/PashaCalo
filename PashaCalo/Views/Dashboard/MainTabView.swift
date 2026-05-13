@@ -14,11 +14,7 @@ struct MainTabView: View {
                 case 0:
                     DashboardView()
                 case 1:
-                    PlaceholderTabView(
-                        iconName: "chart.line.uptrend.xyaxis",
-                        title: "進捗",
-                        subtitle: "食事と体重の推移がここに表示されます"
-                    )
+                    ProgressView()
                 case 3:
                     PlaceholderTabView(
                         iconName: "person.2.fill",
