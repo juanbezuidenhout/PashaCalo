@@ -1,9 +1,14 @@
 import SwiftUI
 
 struct DashboardView: View {
+    @EnvironmentObject private var appState: AppState
     @State private var showRemaining: Bool = true
 
     private let calendar = Calendar.current
+
+    private var streakDays: Int {
+        appState.userProfile?.streakDays ?? 0
+    }
 
     private var carouselDates: [Date] {
         let today = calendar.startOfDay(for: Date())
@@ -53,7 +58,7 @@ struct DashboardView: View {
                     Image(systemName: "flame.fill")
                         .font(.system(size: 14))
                         .foregroundStyle(.orange)
-                    Text("0")
+                    Text("\(streakDays)")
                         .font(.custom("NotoSansJP-SemiBold", size: 13))
                         .foregroundStyle(Color("AccentBlack"))
                 }
@@ -458,4 +463,5 @@ private struct MacroRingCard: View {
 
 #Preview {
     DashboardView()
+        .environmentObject(AppState())
 }
