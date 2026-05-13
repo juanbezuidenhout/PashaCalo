@@ -16,6 +16,9 @@ struct FoodLogView: View {
     @State private var dotCount: Int = 1
     @State private var dotTimer: Timer? = nil
 
+    @State private var saveError: String? = nil
+    @State private var showSaveErrorAlert: Bool = false
+
     var body: some View {
         ZStack {
             Color("AppBackground").ignoresSafeArea()
@@ -34,11 +37,15 @@ struct FoodLogView: View {
                             FoodResultView(
                                 image: image,
                                 items: $foodItems,
-                                onSave: handleSave
+                                onSave: { mealType in
+                                    handleSave(mealType: mealType)
+                                }
                             )
                         } else {
                             sourceSelection
                         }
+                    case 4:
+                        savingView
                     default:
                         sourceSelection
                     }
@@ -57,6 +64,11 @@ struct FoodLogView: View {
                 handlePickedImage(image)
             }
             .ignoresSafeArea()
+        }
+        .alert("保存できませんでした", isPresented: $showSaveErrorAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(saveError ?? "")
         }
     }
 
@@ -169,9 +181,52 @@ struct FoodLogView: View {
         step = 2
     }
 
-    private func handleSave() {
-        dismiss()
-        onLogged()
+    private func handleSave(mealType: String) {
+        step = 4
+        Task {
+            do {
+                guard let userId = SupabaseManager.shared.currentUserID else {
+                    throw NSError(
+                        domain: "FoodLogView",
+                        code: -1,
+                        userInfo: [NSLocalizedDescriptionKey: "サインインが必要です"]
+                    )
+                }
+                let entry = FoodEntry(
+                    userID: userId,
+                    items: foodItems,
+                    mealType: mealType,
+                    totalKcal: foodItems.reduce(0) { $0 + $1.kcal },
+                    loggedAt: Date()
+                )
+                try await SupabaseManager.shared.saveFoodEntry(entry)
+                await MainActor.run {
+                    dismiss()
+                    onLogged()
+                }
+            } catch {
+                await MainActor.run {
+                    saveError = error.localizedDescription
+                    showSaveErrorAlert = true
+                    step = 3
+                }
+            }
+        }
+    }
+
+    private var savingView: some View {
+        VStack(spacing: 16) {
+            Spacer()
+            SwiftUI.ProgressView()
+                .progressViewStyle(.circular)
+                .scaleEffect(1.6)
+                .tint(Color("AccentBlack"))
+            Text("記録中...")
+                .font(.custom("NotoSansJP-SemiBold", size: 16))
+                .foregroundStyle(Color("AccentBlack"))
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private func runAnalysis() {

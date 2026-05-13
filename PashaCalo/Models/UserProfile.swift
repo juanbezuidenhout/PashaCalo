@@ -41,4 +41,19 @@ struct UserProfile: Codable, Identifiable {
         self.dailyFatTarget = dailyFatTarget
         self.streakDays = streakDays
     }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case sex
+        case dateOfBirth = "date_of_birth"
+        case heightCm = "height_cm"
+        case weightKg = "weight_kg"
+        case goalWeightKg = "goal_weight_kg"
+        case activityLevel = "activity_level"
+        case dailyKcalTarget = "daily_kcal_target"
+        case dailyProteinTarget = "daily_protein_target"
+        case dailyCarbTarget = "daily_carb_target"
+        case dailyFatTarget = "daily_fat_target"
+        case streakDays = "streak_days"
+    }
 }

@@ -9,6 +9,12 @@ struct PashaCaloApp: App {
             RootView()
                 .environmentObject(appState)
                 .preferredColorScheme(.light)
+                .task {
+                    SupabaseManager.shared.appState = appState
+                    if SupabaseManager.shared.isSignedIn {
+                        appState.setAuthenticated(true)
+                    }
+                }
         }
     }
 }

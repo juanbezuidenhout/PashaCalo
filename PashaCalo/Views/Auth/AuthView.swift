@@ -1,8 +1,13 @@
 import AuthenticationServices
+import CryptoKit
 import SwiftUI
 
 struct AuthView: View {
     @EnvironmentObject private var appState: AppState
+
+    @State private var currentNonce: String? = nil
+    @State private var isWorking: Bool = false
+    @State private var errorMessage: String? = nil
 
     var body: some View {
         ZStack {
@@ -26,6 +31,15 @@ struct AuthView: View {
                     .multilineTextAlignment(.center)
                     .padding(.top, 8)
 
+                if let errorMessage {
+                    Text(errorMessage)
+                        .font(.custom("NotoSansJP-Regular", size: 12))
+                        .foregroundStyle(.red)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 24)
+                        .padding(.top, 12)
+                }
+
                 Spacer()
 
                 VStack(spacing: 12) {
@@ -33,6 +47,8 @@ struct AuthView: View {
                     googleSignInButton
                     emailSignInButton
                 }
+                .disabled(isWorking)
+                .opacity(isWorking ? 0.6 : 1.0)
                 .padding(.bottom, 40)
             }
             .padding(.horizontal, 28)
@@ -41,10 +57,12 @@ struct AuthView: View {
 
     private var appleSignInButton: some View {
         SignInWithAppleButton(.signIn) { request in
+            let nonce = randomNonceString()
+            currentNonce = nonce
             request.requestedScopes = [.fullName, .email]
-        } onCompletion: { _ in
-            // Real auth handling lands in a later prompt; for now accept any result.
-            appState.setAuthenticated(true)
+            request.nonce = sha256(nonce)
+        } onCompletion: { result in
+            handleAppleCompletion(result)
         }
         .signInWithAppleButtonStyle(.black)
         .frame(height: 56)
@@ -53,7 +71,10 @@ struct AuthView: View {
 
     private var googleSignInButton: some View {
         Button {
-            appState.setAuthenticated(true)
+            // Google Sign-In requires the GoogleSignIn SDK to obtain a real idToken.
+            // Add GoogleSignIn-iOS via SPM, present GIDSignIn from this view,
+            // then pass the resulting idToken to SupabaseManager.shared.signInWithGoogle.
+            errorMessage = "Google サインインは準備中です"
         } label: {
             providerLabel(
                 systemImage: "g.circle.fill",
@@ -65,7 +86,9 @@ struct AuthView: View {
 
     private var emailSignInButton: some View {
         Button {
-            appState.setAuthenticated(true)
+            // Email auth needs a dedicated input screen (magic link or OTP).
+            // Build EmailAuthView and call supabase.auth.signInWithOTP from there.
+            errorMessage = "メールサインインは準備中です"
         } label: {
             providerLabel(
                 systemImage: "envelope.fill",
@@ -98,6 +121,79 @@ struct AuthView: View {
             RoundedRectangle(cornerRadius: 28, style: .continuous)
                 .strokeBorder(Color("BorderLight"), lineWidth: 1)
         )
+    }
+
+    // MARK: - Apple sign-in completion
+
+    private func handleAppleCompletion(_ result: Result<ASAuthorization, Error>) {
+        switch result {
+        case .success(let authorization):
+            guard
+                let credential = authorization.credential as? ASAuthorizationAppleIDCredential,
+                let tokenData = credential.identityToken,
+                let idTokenString = String(data: tokenData, encoding: .utf8),
+                let nonce = currentNonce
+            else {
+                errorMessage = "Apple サインインに失敗しました"
+                return
+            }
+
+            isWorking = true
+            errorMessage = nil
+            Task {
+                defer { isWorking = false }
+                do {
+                    try await SupabaseManager.shared.signInWithApple(
+                        idToken: idTokenString,
+                        nonce: nonce
+                    )
+                } catch {
+                    errorMessage = "サインインエラー: \(error.localizedDescription)"
+                }
+            }
+
+        case .failure(let error):
+            // User cancellation has code .canceled; suppress that as it isn't an error.
+            if (error as NSError).code == ASAuthorizationError.canceled.rawValue {
+                return
+            }
+            errorMessage = "Apple サインインエラー: \(error.localizedDescription)"
+        }
+    }
+
+    // MARK: - Nonce helpers
+
+    /// Generates a cryptographically random nonce string.
+    /// Apple requires the raw nonce passed through to the IdP, with its SHA256 hash
+    /// included in the original authorization request.
+    private func randomNonceString(length: Int = 32) -> String {
+        precondition(length > 0)
+        let charset: [Character] = Array(
+            "0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._"
+        )
+        var result = ""
+        var remainingLength = length
+
+        while remainingLength > 0 {
+            let randoms: [UInt8] = (0..<16).map { _ in
+                var random: UInt8 = 0
+                _ = SecRandomCopyBytes(kSecRandomDefault, 1, &random)
+                return random
+            }
+            for random in randoms where remainingLength > 0 {
+                if random < charset.count {
+                    result.append(charset[Int(random)])
+                    remainingLength -= 1
+                }
+            }
+        }
+        return result
+    }
+
+    private func sha256(_ input: String) -> String {
+        let inputData = Data(input.utf8)
+        let hashedData = SHA256.hash(data: inputData)
+        return hashedData.compactMap { String(format: "%02x", $0) }.joined()
     }
 }
 

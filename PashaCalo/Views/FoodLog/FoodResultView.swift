@@ -4,10 +4,11 @@ import UIKit
 struct FoodResultView: View {
     let image: UIImage
     @Binding var items: [FoodItem]
-    var onSave: () -> Void
+    var onSave: (_ mealType: String) -> Void
 
     @State private var selectedMeal: Int = 1
     @State private var isEditing: Bool = false
+    @State private var isSaving: Bool = false
 
     private let mealLabels: [String] = ["朝食", "昼食", "夕食", "間食"]
 
@@ -212,9 +213,13 @@ struct FoodResultView: View {
 
     private var actionButtons: some View {
         VStack(spacing: 12) {
-            PrimaryButton(title: "記録する") {
-                onSave()
+            PrimaryButton(title: isSaving ? "記録中..." : "記録する") {
+                guard !isSaving else { return }
+                isSaving = true
+                onSave(mealLabels[selectedMeal])
             }
+            .disabled(isSaving)
+            .opacity(isSaving ? 0.7 : 1.0)
 
             Button {
                 withAnimation(.easeInOut(duration: 0.2)) {
@@ -240,7 +245,7 @@ struct FoodResultView: View {
             FoodItem(name: "おにぎり（鮭）", kcal: 185, protein: 6.2, carbs: 34.1, fat: 2.8),
             FoodItem(name: "緑茶（500ml）", kcal: 0, protein: 0, carbs: 0, fat: 0)
         ]),
-        onSave: {}
+        onSave: { _ in }
     )
     .background(Color("AppBackground"))
 }

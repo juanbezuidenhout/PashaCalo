@@ -4,6 +4,9 @@ struct ProfileView: View {
     @EnvironmentObject private var appState: AppState
 
     @State private var showDeleteConfirm: Bool = false
+    @State private var isDeleting: Bool = false
+    @State private var deleteError: String? = nil
+    @State private var showDeleteErrorAlert: Bool = false
 
     private let gold = Color(red: 0xFF / 255, green: 0xD7 / 255, blue: 0x00 / 255)
     private let appleHealthRed = Color(red: 0xFF / 255, green: 0x2D / 255, blue: 0x55 / 255)
@@ -45,11 +48,35 @@ struct ProfileView: View {
             ) {
                 Button("キャンセル", role: .cancel) { }
                 Button("削除する", role: .destructive) {
-                    appState.setAuthenticated(false)
-                    appState.isOnboardingComplete = false
+                    performDeleteAccount()
                 }
             } message: {
                 Text("この操作は取り消せません。すべてのデータが削除されます。")
+            }
+            .alert("削除できませんでした", isPresented: $showDeleteErrorAlert) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text(deleteError ?? "")
+            }
+        }
+    }
+
+    private func performDeleteAccount() {
+        guard !isDeleting else { return }
+        isDeleting = true
+        Task {
+            do {
+                try await SupabaseManager.shared.deleteAccount()
+                await MainActor.run {
+                    isDeleting = false
+                    appState.isOnboardingComplete = false
+                }
+            } catch {
+                await MainActor.run {
+                    isDeleting = false
+                    deleteError = error.localizedDescription
+                    showDeleteErrorAlert = true
+                }
             }
         }
     }

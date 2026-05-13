@@ -3,6 +3,8 @@ import SwiftUI
 struct DashboardView: View {
     @EnvironmentObject private var appState: AppState
     @State private var showRemaining: Bool = true
+    @State private var todayEntries: [FoodEntry] = []
+    @State private var isLoadingEntries: Bool = false
 
     private let calendar = Calendar.current
 
@@ -38,6 +40,23 @@ struct DashboardView: View {
                 }
             }
             .navigationBarHidden(true)
+            .task {
+                await loadTodayEntries()
+            }
+            .refreshable {
+                await loadTodayEntries()
+            }
+        }
+    }
+
+    private func loadTodayEntries() async {
+        isLoadingEntries = true
+        defer { isLoadingEntries = false }
+        do {
+            let entries = try await SupabaseManager.shared.loadTodayEntries()
+            todayEntries = entries
+        } catch {
+            print("Failed to load today entries: \(error)")
         }
     }
 
@@ -321,30 +340,88 @@ struct DashboardView: View {
                     .foregroundStyle(Color("TextSecondary"))
             }
 
-            VStack(spacing: 10) {
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .fill(Color("AppBackground"))
-                    .frame(width: 80, height: 60)
-
-                Text("＋ボタンで今日の食事を追加しましょう")
-                    .font(.custom("NotoSansJP-Regular", size: 13))
-                    .foregroundStyle(Color("TextSecondary"))
-                    .multilineTextAlignment(.center)
+            if todayEntries.isEmpty {
+                emptyMealsCard
+            } else {
+                VStack(spacing: 10) {
+                    ForEach(todayEntries) { entry in
+                        mealEntryRow(entry: entry)
+                    }
+                }
             }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 20)
-            .background(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(Color("CardBackground"))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .strokeBorder(
-                        Color("BorderLight"),
-                        style: StrokeStyle(lineWidth: 1, dash: [4, 4])
-                    )
-            )
         }
+    }
+
+    private var emptyMealsCard: some View {
+        VStack(spacing: 10) {
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .fill(Color("AppBackground"))
+                .frame(width: 80, height: 60)
+
+            Text("＋ボタンで今日の食事を追加しましょう")
+                .font(.custom("NotoSansJP-Regular", size: 13))
+                .foregroundStyle(Color("TextSecondary"))
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 20)
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(Color("CardBackground"))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .strokeBorder(
+                    Color("BorderLight"),
+                    style: StrokeStyle(lineWidth: 1, dash: [4, 4])
+                )
+        )
+    }
+
+    private func mealEntryRow(entry: FoodEntry) -> some View {
+        HStack(spacing: 12) {
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .fill(Color("AppBackground"))
+                .frame(width: 60, height: 60)
+                .overlay(
+                    Image(systemName: "fork.knife")
+                        .font(.system(size: 22))
+                        .foregroundStyle(Color("TextSecondary"))
+                )
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(entry.items.first?.name ?? entry.mealType)
+                    .font(.custom("NotoSansJP-SemiBold", size: 15))
+                    .foregroundStyle(Color("AccentBlack"))
+                    .lineLimit(1)
+                Text(mealSubtitle(for: entry))
+                    .font(.custom("NotoSansJP-Regular", size: 12))
+                    .foregroundStyle(Color("TextSecondary"))
+                    .lineLimit(1)
+            }
+
+            Spacer()
+
+            Text("\(entry.totalKcal) kcal")
+                .font(.custom("NotoSansJP-Bold", size: 15))
+                .foregroundStyle(Color("AccentBlack"))
+        }
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(Color("CardBackground"))
+        )
+        .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
+    }
+
+    private func mealSubtitle(for entry: FoodEntry) -> String {
+        let timeFormatter = DateFormatter()
+        timeFormatter.dateFormat = "HH:mm"
+        let timeString = timeFormatter.string(from: entry.loggedAt)
+        if entry.items.count > 1 {
+            return "\(entry.mealType)　\(timeString)　他\(entry.items.count - 1)品"
+        }
+        return "\(entry.mealType)　\(timeString)"
     }
 
     // MARK: - Section 6: Health Score card
