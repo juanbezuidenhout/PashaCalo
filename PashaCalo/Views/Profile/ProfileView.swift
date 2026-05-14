@@ -174,7 +174,7 @@ struct ProfileView: View {
             } label: {
                 row(iconName: "person.fill", iconColor: Color("AccentBlack"), label: "個人情報", labelColor: Color("AccentBlack"))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable(.secondary))
 
             divider
 
@@ -227,7 +227,7 @@ struct ProfileView: View {
             } label: {
                 row(iconName: "trash", iconColor: destructiveRed, label: "アカウントを削除", labelColor: destructiveRed)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable(.secondary))
         }
         .background(cardBackground)
         .padding(.horizontal, 16)

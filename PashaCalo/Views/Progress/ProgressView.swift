@@ -77,7 +77,7 @@ struct ProgressView: View {
                         .stroke(Color("BorderLight"), lineWidth: isSelected ? 0 : 1)
                 )
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable(.selection))
     }
 
     // MARK: - Card 1: Weekly energy
@@ -174,7 +174,7 @@ struct ProgressView: View {
                         .font(.system(size: 18))
                         .foregroundStyle(Color("TextSecondary"))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable(.subtle))
             }
 
             Text(bmiDisplay)

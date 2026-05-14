@@ -100,7 +100,7 @@ struct GroupsView: View {
                             .stroke(Color("BorderLight"), lineWidth: 1)
                     )
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable(.secondary))
         }
     }
 
@@ -152,7 +152,7 @@ struct GroupsView: View {
                             .stroke(Color("BorderLight"), lineWidth: 1)
                     )
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable(.secondary))
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)

@@ -4,20 +4,8 @@ struct PrimaryButton: View {
     let title: String
     let action: () -> Void
 
-    @State private var isPressed: Bool = false
-
     var body: some View {
-        Button {
-            withAnimation(.spring(response: 0.25, dampingFraction: 0.55)) {
-                isPressed = true
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) {
-                withAnimation(.spring(response: 0.35, dampingFraction: 0.6)) {
-                    isPressed = false
-                }
-            }
-            action()
-        } label: {
+        Button(action: action) {
             Text(title)
                 .font(.custom("NotoSansJP-SemiBold", size: 17))
                 .foregroundStyle(.white)
@@ -29,8 +17,7 @@ struct PrimaryButton: View {
                 )
                 .shadow(color: Color.black.opacity(0.12), radius: 14, x: 0, y: 8)
         }
-        .buttonStyle(.plain)
-        .scaleEffect(isPressed ? 0.97 : 1.0)
+        .buttonStyle(.pressable(.primary))
     }
 }
 

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct RootView: View {
     @EnvironmentObject private var appState: AppState
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         ZStack {
@@ -36,6 +37,12 @@ struct RootView: View {
             .animation(.easeInOut(duration: 0.35), value: appState.isOnboardingComplete)
             .animation(.easeInOut(duration: 0.35), value: appState.isAuthenticated)
             .animation(.easeInOut(duration: 0.35), value: appState.hasSeenPaywall)
+        }
+        .onAppear { Haptics.warmUp() }
+        .onChange(of: scenePhase) { phase in
+            // Re-prime the Taptic Engine when the app returns from
+            // background so the first tap after foregrounding is instant.
+            if phase == .active { Haptics.warmUp() }
         }
     }
 

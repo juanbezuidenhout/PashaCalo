@@ -89,7 +89,7 @@ struct FoodLogView: View {
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundStyle(Color("TextSecondary"))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable(.navigation))
             }
             .padding(.horizontal, 20)
         }
@@ -139,7 +139,7 @@ struct FoodLogView: View {
             )
             .shadow(color: .black.opacity(0.06), radius: 10, x: 0, y: 4)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable(.secondary))
     }
 
     // MARK: - Step 2: analysing screen

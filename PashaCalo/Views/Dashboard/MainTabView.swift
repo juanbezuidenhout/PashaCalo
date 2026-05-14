@@ -65,7 +65,7 @@ struct MainTabView: View {
             .frame(maxWidth: .infinity)
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable(.tab))
     }
 
     private var centerButton: some View {
@@ -84,7 +84,7 @@ struct MainTabView: View {
             }
             .offset(y: -16)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable(.primary))
         .frame(maxWidth: .infinity)
     }
 

@@ -206,7 +206,7 @@ struct FoodResultView: View {
                         .stroke(Color("BorderLight"), lineWidth: isSelected ? 0 : 1)
                 )
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable(.selection))
     }
 
     // MARK: - Action buttons
@@ -232,7 +232,7 @@ struct FoodResultView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 6)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable(.subtle))
         }
         .padding(.top, 8)
     }

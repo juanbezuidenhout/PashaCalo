@@ -100,7 +100,7 @@ struct OnboardingDietView: View {
                     .fill(selected ? Color("AccentBlack") : rowBackground)
             )
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable(.selection))
         .animation(.easeInOut(duration: 0.15), value: selected)
     }
 }

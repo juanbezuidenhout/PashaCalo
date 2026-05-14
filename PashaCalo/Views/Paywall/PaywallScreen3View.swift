@@ -35,7 +35,7 @@ struct PaywallScreen3View: View {
                             .foregroundStyle(Color("TextSecondary"))
                             .frame(maxWidth: .infinity)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable(.subtle))
 
                     Text("3日間の無料トライアル後、選択したプランで自動更新されます。")
                         .font(.custom("NotoSansJP-Regular", size: 11))
@@ -176,7 +176,7 @@ struct PaywallScreen3View: View {
                         )
                 )
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable(.selection))
     }
 }
 

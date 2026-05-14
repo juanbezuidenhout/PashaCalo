@@ -58,6 +58,8 @@
 		AA0000000000000000000084 /* OnboardingDietView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000083 /* OnboardingDietView.swift */; };
 		AA0000000000000000000086 /* OnboardingGoalPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000085 /* OnboardingGoalPlanView.swift */; };
 		AA0000000000000000000088 /* OnboardingPaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000087 /* OnboardingPaceView.swift */; };
+		AA000000000000000000008A /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000089 /* Haptics.swift */; };
+		AA000000000000000000008C /* PressableStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000008B /* PressableStyle.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -112,6 +114,8 @@
 		AA0000000000000000000083 /* OnboardingDietView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingDietView.swift; sourceTree = "<group>"; };
 		AA0000000000000000000085 /* OnboardingGoalPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingGoalPlanView.swift; sourceTree = "<group>"; };
 		AA0000000000000000000087 /* OnboardingPaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPaceView.swift; sourceTree = "<group>"; };
+		AA0000000000000000000089 /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
+		AA000000000000000000008B /* PressableStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PressableStyle.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -162,6 +166,7 @@
 		AA0000000000000000000014 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				AA0000000000000000000089 /* Haptics.swift */,
 				AA0000000000000000000012 /* SupabaseManager.swift */,
 			);
 			path = Services;
@@ -198,6 +203,7 @@
 			isa = PBXGroup;
 			children = (
 				AA0000000000000000000019 /* PrimaryButton.swift */,
+				AA000000000000000000008B /* PressableStyle.swift */,
 				AA0000000000000000000075 /* PhoneMockupWebView.swift */,
 				AA000000000000000000007B /* NativeWheelPicker.swift */,
 				AA000000000000000000007F /* HorizontalRulerPicker.swift */,
@@ -467,6 +473,8 @@
 				AA0000000000000000000076 /* PhoneMockupWebView.swift in Sources */,
 				AA000000000000000000007C /* NativeWheelPicker.swift in Sources */,
 				AA0000000000000000000080 /* HorizontalRulerPicker.swift in Sources */,
+				AA000000000000000000008A /* Haptics.swift in Sources */,
+				AA000000000000000000008C /* PressableStyle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

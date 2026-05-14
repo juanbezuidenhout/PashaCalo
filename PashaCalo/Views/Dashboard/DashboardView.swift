@@ -92,7 +92,7 @@ struct DashboardView: View {
                         .stroke(Color("BorderLight"), lineWidth: 1)
                 )
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable(.secondary))
         }
     }
 
@@ -163,7 +163,7 @@ struct DashboardView: View {
                             .foregroundStyle(Color("TextSecondary"))
                     }
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable(.subtle))
             }
 
             Spacer()
@@ -288,7 +288,7 @@ struct DashboardView: View {
                         Capsule().fill(Color("AccentBlack"))
                     )
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable(.secondary))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(10)
@@ -485,7 +485,7 @@ struct DashboardView: View {
                             .stroke(Color("BorderLight"), lineWidth: 1)
                     )
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable(.secondary))
         }
         .padding(14)
         .background(

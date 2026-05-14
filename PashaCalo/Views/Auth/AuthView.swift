@@ -81,7 +81,7 @@ struct AuthView: View {
                 title: "Googleでサインイン"
             )
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable(.primary))
     }
 
     private var emailSignInButton: some View {
@@ -95,7 +95,7 @@ struct AuthView: View {
                 title: "メールで続ける"
             )
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable(.primary))
     }
 
     private func providerLabel(systemImage: String, title: String) -> some View {

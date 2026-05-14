@@ -54,7 +54,7 @@ struct MilestonesView: View {
                     .frame(width: 32, height: 32)
                     .contentShape(Rectangle())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable(.navigation))
 
             Spacer()
 

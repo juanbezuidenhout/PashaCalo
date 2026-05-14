@@ -60,7 +60,7 @@ struct PersonalDetailsView: View {
                             .stroke(Color("BorderLight"), lineWidth: 1)
                     )
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable(.secondary))
         }
         .padding(14)
         .background(cardBackground)
