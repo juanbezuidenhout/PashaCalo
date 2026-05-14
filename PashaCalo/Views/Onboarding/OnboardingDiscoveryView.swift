@@ -85,8 +85,10 @@ struct OnboardingDiscoveryView: View {
                 .interpolation(.high)
                 .aspectRatio(contentMode: .fit)
         case .symbol(let name):
+            // SF Symbols at 22pt visually overshoot the brand icons (which fill
+            // ~96% of a 28pt frame). 18pt brings them to the same optical size.
             Image(systemName: name)
-                .font(.system(size: 22, weight: .regular))
+                .font(.system(size: 18, weight: .regular))
                 .foregroundStyle(selected ? .white : Color("TextPrimary"))
         }
     }

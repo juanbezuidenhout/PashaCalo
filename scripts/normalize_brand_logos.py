@@ -21,12 +21,21 @@ CANVAS = 1024
 FILL_RATIO = 0.96  # how much of the canvas the brand mark should occupy
 
 
+WHITE_THRESHOLD = 230  # treat any pixel with all RGB >= this as background
+ALPHA_THRESHOLD = 32  # treat alpha below this as background
+
+
 def bbox_of_content(img: Image.Image) -> tuple[int, int, int, int]:
-    """Return tight bbox of the visible (non-background) content."""
+    """Return tight bbox of the visible non-white, non-transparent content.
+
+    Many of the source PNGs ship with a white (or near-white) surround around
+    the actual colored brand mark. A strict alpha-only bbox would include that
+    surround and make the visible content render smaller than peer icons. We
+    skip both transparent pixels and pixels that are near-white.
+    """
     if img.mode != "RGBA":
         img = img.convert("RGBA")
 
-    # Build an alpha mask: treat near-white and fully-transparent pixels as background.
     alpha = img.split()[-1]
     rgb = img.convert("RGB")
     pixels = rgb.load()
@@ -37,11 +46,10 @@ def bbox_of_content(img: Image.Image) -> tuple[int, int, int, int]:
     for y in range(h):
         for x in range(w):
             a = alpha.getpixel((x, y))
-            if a < 8:
+            if a < ALPHA_THRESHOLD:
                 continue
             r, g, b = pixels[x, y]
-            # Background if ~white (every channel >= 245)
-            if r >= 245 and g >= 245 and b >= 245:
+            if r >= WHITE_THRESHOLD and g >= WHITE_THRESHOLD and b >= WHITE_THRESHOLD:
                 continue
             m[x, y] = 255
 
@@ -106,17 +114,17 @@ def build_youtube_icon(dst: Path) -> None:
     canvas = Image.new("RGBA", (CANVAS, CANVAS), (0, 0, 0, 0))
     canvas.paste(bg_layer, (offset, offset), mask)
 
-    # White play triangle: wider than tall (right-pointing), centered inside
-    # the red square. Width ~36% of canvas, height ~30% — proportions taken
-    # from the official YouTube play button.
+    # White play triangle: right-pointing, roughly equilateral.
+    # Width ~32% of canvas, height ~30% — matches the official YouTube
+    # play button proportions and avoids looking horizontally stretched.
     draw = ImageDraw.Draw(canvas)
-    tri_w = int(CANVAS * 0.36)
+    tri_w = int(CANVAS * 0.32)
     tri_h = int(CANVAS * 0.30)
     cx = CANVAS // 2
     cy = CANVAS // 2
-    # Optical correction: shift slightly right of geometric center so the
-    # triangle's centroid (at 1/3 from base) appears centered in the square.
-    optical_offset = int(CANVAS * 0.025)
+    # Optical correction: shift triangle a hair right of geometric center so
+    # its centroid (at 1/3 from the base) sits at the icon's true center.
+    optical_offset = int(CANVAS * 0.012)
     left = cx - tri_w // 2 + optical_offset
     right = left + tri_w
     top = cy - tri_h // 2
