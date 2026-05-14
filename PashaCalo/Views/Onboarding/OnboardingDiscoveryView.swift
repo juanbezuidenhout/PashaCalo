@@ -21,6 +21,8 @@ struct OnboardingDiscoveryView: View {
         .init(icon: .asset("TikTokLogo"), label: "TikTok"),
         .init(icon: .asset("FacebookLogo"), label: "Facebook"),
         .init(icon: .asset("YouTubeLogo"), label: "YouTube"),
+        .init(icon: .asset("ChatGPTLogo"), label: "ChatGPT"),
+        .init(icon: .asset("GeminiLogo"), label: "Gemini"),
         .init(icon: .symbol("person.2.fill"), label: "友人・家族"),
         .init(icon: .asset("AppStoreLogo"), label: "App Store"),
         .init(icon: .symbol("ellipsis.circle"), label: "その他")

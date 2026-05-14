@@ -91,6 +91,117 @@ def rounded_rect_mask(size: int, radius_ratio: float = 0.225) -> Image.Image:
     return mask
 
 
+def bbox_excluding_corner_bg(img: Image.Image, tolerance: int = 10) -> tuple[int, int, int, int]:
+    """Return bbox of pixels that differ from the corner-sampled background.
+
+    Used for sources where the background is a near-uniform light tint (not
+    pure white) and the icon itself is white — the standard `bbox_of_content`
+    would discard the icon because it skips white. By sampling the top-left
+    corner as background and keeping any pixel that deviates from it, we
+    catch both the icon's white body and any colored interior.
+    """
+    if img.mode != "RGBA":
+        img = img.convert("RGBA")
+    pixels = img.load()
+    w, h = img.size
+    bg_r, bg_g, bg_b, _ = pixels[0, 0]
+
+    mask = Image.new("L", (w, h), 0)
+    m = mask.load()
+    for y in range(h):
+        for x in range(w):
+            r, g, b, a = pixels[x, y]
+            if a < ALPHA_THRESHOLD:
+                continue
+            if (abs(r - bg_r) + abs(g - bg_g) + abs(b - bg_b)) <= tolerance:
+                continue
+            m[x, y] = 255
+
+    bbox = mask.getbbox()
+    if bbox is None:
+        return (0, 0, w, h)
+    return bbox
+
+
+def normalize_keeping_white_bg(src: Path, dst: Path) -> None:
+    """Like `normalize_to_square`, but uses corner-color detection.
+
+    For sources whose icon container is white (e.g. Gemini) on a slightly
+    off-white page background — keeps the white rounded square intact.
+    """
+    img = Image.open(src).convert("RGBA")
+    bbox = bbox_excluding_corner_bg(img)
+    cropped = img.crop(bbox)
+
+    cw, ch = cropped.size
+    target = int(CANVAS * FILL_RATIO)
+    scale = target / max(cw, ch)
+    new_w = max(1, int(round(cw * scale)))
+    new_h = max(1, int(round(ch * scale)))
+    cropped = cropped.resize((new_w, new_h), Image.LANCZOS)
+
+    canvas = Image.new("RGBA", (CANVAS, CANVAS), (0, 0, 0, 0))
+    ox = (CANVAS - new_w) // 2
+    oy = (CANVAS - new_h) // 2
+    canvas.paste(cropped, (ox, oy), cropped)
+
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    canvas.save(dst, "PNG", optimize=True)
+    print(f"  -> {dst.relative_to(REPO_ROOT)}  (keep white bg, {src.name} -> {CANVAS}x{CANVAS})")
+
+
+def build_chatgpt_icon(src: Path, dst: Path) -> None:
+    """Build a ChatGPT app-icon: black rounded square with the white knot mark.
+
+    The source is a black knot on a white background with no rounded-square
+    container. We trim to the knot, recolor it to white using its silhouette
+    as a mask, then composite it onto a black rounded square — matching the
+    visual style of the official ChatGPT app icon (and the rest of our icons).
+    """
+    img = Image.open(src).convert("RGBA")
+    bbox = bbox_of_content(img)
+    knot = img.crop(bbox)
+
+    # Build a binary silhouette from the dark pixels of the source.
+    knot_rgb = knot.convert("RGB")
+    kw, kh = knot.size
+    silhouette = Image.new("L", (kw, kh), 0)
+    sp = silhouette.load()
+    kp = knot_rgb.load()
+    for y in range(kh):
+        for x in range(kw):
+            r, g, b = kp[x, y]
+            if r < 128 and g < 128 and b < 128:
+                sp[x, y] = 255
+
+    # Scale silhouette so its longest side hits ~62% of the canvas — leaves
+    # a tasteful margin inside the black rounded square.
+    target_w = int(CANVAS * 0.62)
+    scale = target_w / max(kw, kh)
+    new_w = max(1, int(round(kw * scale)))
+    new_h = max(1, int(round(kh * scale)))
+    silhouette = silhouette.resize((new_w, new_h), Image.LANCZOS)
+
+    # Black rounded square at FILL_RATIO, matching peer icons.
+    inner = int(CANVAS * FILL_RATIO)
+    offset = (CANVAS - inner) // 2
+    bg = Image.new("RGBA", (inner, inner), (0, 0, 0, 255))
+    mask = rounded_rect_mask(inner)
+
+    canvas = Image.new("RGBA", (CANVAS, CANVAS), (0, 0, 0, 0))
+    canvas.paste(bg, (offset, offset), mask)
+
+    # Paste a pure white layer using the silhouette as its alpha mask.
+    white_layer = Image.new("RGBA", (new_w, new_h), (255, 255, 255, 255))
+    ox = (CANVAS - new_w) // 2
+    oy = (CANVAS - new_h) // 2
+    canvas.paste(white_layer, (ox, oy), silhouette)
+
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    canvas.save(dst, "PNG", optimize=True)
+    print(f"  -> {dst.relative_to(REPO_ROOT)}  (ChatGPT black app-icon)")
+
+
 def build_youtube_icon(dst: Path) -> None:
     """Build a YouTube app-icon: red rounded square with a white play triangle.
 
@@ -154,6 +265,8 @@ def main() -> int:
 
     new_x = find_source("x-new-social-network*.png")
     new_facebook = find_source("facebook-logo-facebook-icon*.png")
+    new_gemini = find_source("Google-Gemini-New-Logo*.png")
+    new_chatgpt = find_source("chatgpt-logo*.png")
 
     print("\nX (replace with new square app-icon source):")
     normalize_to_square(new_x, ASSETS_DIR / "XLogo.imageset" / "x.png")
@@ -176,6 +289,12 @@ def main() -> int:
     print("\nYouTube (red rounded square app-icon with play triangle):")
     yt_path = ASSETS_DIR / "YouTubeLogo.imageset" / "youtube.png"
     build_youtube_icon(yt_path)
+
+    print("\nGemini (preserve white rounded square + gradient star):")
+    normalize_keeping_white_bg(new_gemini, ASSETS_DIR / "GeminiLogo.imageset" / "gemini.png")
+
+    print("\nChatGPT (black rounded square with white knot mark):")
+    build_chatgpt_icon(new_chatgpt, ASSETS_DIR / "ChatGPTLogo.imageset" / "chatgpt.png")
 
     print("\nDone.")
     return 0
