@@ -11,7 +11,7 @@ struct OnboardingActivityView: View {
     }
 
     private let options: [ActivityOption] = [
-        .init(icon: "figure.walk", label: "週0〜2回　たまに動く"),
+        .init(icon: "figure.walk", label: "週0〜2回　たまに運動する"),
         .init(icon: "figure.run", label: "週3〜5回　定期的に運動する"),
         .init(icon: "figure.strengthtraining.traditional", label: "週6回以上　本格的に鍛えている")
     ]
@@ -27,7 +27,7 @@ struct OnboardingActivityView: View {
                     .font(.custom("NotoSansJP-Bold", size: 26))
                     .foregroundStyle(Color("TextPrimary"))
 
-                Text("目標kcalの計算に使います")
+                Text("目標カロリーの計算に使用します")
                     .font(.custom("NotoSansJP-Regular", size: 14))
                     .foregroundStyle(Color("TextSecondary"))
             }

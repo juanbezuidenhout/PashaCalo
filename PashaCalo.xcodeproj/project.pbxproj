@@ -48,10 +48,12 @@
 		AA000000000000000000005E /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000005D /* WelcomeView.swift */; };
 		AA0000000000000000000061 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000060 /* Colors.xcassets */; };
 		AA0000000000000000000074 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = AA0000000000000000000073 /* Supabase */; };
+		AA0000000000000000000076 /* PhoneMockupWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000075 /* PhoneMockupWebView.swift */; };
+		AA0000000000000000000078 /* onboarding_video.html in Resources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000077 /* onboarding_video.html */; };
+		AA000000000000000000007A /* BrandLogos.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000079 /* BrandLogos.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		AA0000000000000000000067 /* PashaCalo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PashaCalo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA0000000000000000000002 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		AA0000000000000000000005 /* PashaCaloApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PashaCaloApp.swift; sourceTree = "<group>"; };
 		AA0000000000000000000007 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
@@ -92,6 +94,10 @@
 		AA000000000000000000005A /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		AA000000000000000000005D /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		AA0000000000000000000060 /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
+		AA0000000000000000000067 /* PashaCalo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PashaCalo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA0000000000000000000075 /* PhoneMockupWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneMockupWebView.swift; sourceTree = "<group>"; };
+		AA0000000000000000000077 /* onboarding_video.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = onboarding_video.html; sourceTree = "<group>"; };
+		AA0000000000000000000079 /* BrandLogos.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = BrandLogos.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,28 +112,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		AA0000000000000000000064 = {
+		AA0000000000000000000001 /* PashaCalo */ = {
 			isa = PBXGroup;
 			children = (
-				AA0000000000000000000001 /* PashaCalo */,
-				AA0000000000000000000066 /* Frameworks */,
-				AA0000000000000000000065 /* Products */,
+				AA0000000000000000000004 /* App */,
+				AA000000000000000000000D /* Models */,
+				AA0000000000000000000062 /* Resources */,
+				AA0000000000000000000014 /* Services */,
+				AA0000000000000000000017 /* Views */,
+				AA0000000000000000000009 /* Config.swift */,
 			);
-			sourceTree = "<group>";
-		};
-		AA0000000000000000000065 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				AA0000000000000000000067 /* PashaCalo.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		AA0000000000000000000066 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
+			path = PashaCalo;
 			sourceTree = "<group>";
 		};
 		AA0000000000000000000004 /* App */ = {
@@ -150,20 +145,31 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
-		AA0000000000000000000062 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				AA0000000000000000000060 /* Colors.xcassets */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
 		AA0000000000000000000014 /* Services */ = {
 			isa = PBXGroup;
 			children = (
 				AA0000000000000000000012 /* SupabaseManager.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		AA0000000000000000000017 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000000000000000000018 /* Auth */,
+				AA000000000000000000001B /* Components */,
+				AA000000000000000000001E /* Dashboard */,
+				AA0000000000000000000023 /* FoodLog */,
+				AA000000000000000000002C /* Groups */,
+				AA000000000000000000002F /* Milestones */,
+				AA0000000000000000000032 /* Onboarding */,
+				AA000000000000000000004B /* Paywall */,
+				AA0000000000000000000054 /* Profile */,
+				AA0000000000000000000059 /* Progress */,
+				AA000000000000000000005C /* Splash */,
+				AA000000000000000000005F /* Welcome */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 		AA0000000000000000000018 /* Auth */ = {
@@ -178,6 +184,7 @@
 			isa = PBXGroup;
 			children = (
 				AA0000000000000000000019 /* PrimaryButton.swift */,
+				AA0000000000000000000075 /* PhoneMockupWebView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -281,36 +288,38 @@
 			path = Welcome;
 			sourceTree = "<group>";
 		};
-		AA0000000000000000000017 /* Views */ = {
+		AA0000000000000000000062 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				AA0000000000000000000018 /* Auth */,
-				AA000000000000000000001B /* Components */,
-				AA000000000000000000001E /* Dashboard */,
-				AA0000000000000000000023 /* FoodLog */,
-				AA000000000000000000002C /* Groups */,
-				AA000000000000000000002F /* Milestones */,
-				AA0000000000000000000032 /* Onboarding */,
-				AA000000000000000000004B /* Paywall */,
-				AA0000000000000000000054 /* Profile */,
-				AA0000000000000000000059 /* Progress */,
-				AA000000000000000000005C /* Splash */,
-				AA000000000000000000005F /* Welcome */,
+				AA0000000000000000000060 /* Colors.xcassets */,
+				AA0000000000000000000079 /* BrandLogos.xcassets */,
+				AA0000000000000000000077 /* onboarding_video.html */,
 			);
-			path = Views;
+			path = Resources;
 			sourceTree = "<group>";
 		};
-		AA0000000000000000000001 /* PashaCalo */ = {
+		AA0000000000000000000064 = {
 			isa = PBXGroup;
 			children = (
-				AA0000000000000000000004 /* App */,
-				AA000000000000000000000D /* Models */,
-				AA0000000000000000000062 /* Resources */,
-				AA0000000000000000000014 /* Services */,
-				AA0000000000000000000017 /* Views */,
-				AA0000000000000000000009 /* Config.swift */,
+				AA0000000000000000000001 /* PashaCalo */,
+				AA0000000000000000000066 /* Frameworks */,
+				AA0000000000000000000065 /* Products */,
 			);
-			path = PashaCalo;
+			sourceTree = "<group>";
+		};
+		AA0000000000000000000065 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000000000000000000067 /* PashaCalo.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AA0000000000000000000066 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -378,6 +387,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA0000000000000000000061 /* Colors.xcassets in Resources */,
+				AA000000000000000000007A /* BrandLogos.xcassets in Resources */,
+				AA0000000000000000000078 /* onboarding_video.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -427,6 +438,7 @@
 				AA0000000000000000000058 /* ProgressView.swift in Sources */,
 				AA000000000000000000005B /* SplashView.swift in Sources */,
 				AA000000000000000000005E /* WelcomeView.swift in Sources */,
+				AA0000000000000000000076 /* PhoneMockupWebView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -557,7 +569,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = ATC749MX5C;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = PashaCalo;
@@ -566,7 +578,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -586,7 +598,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = ATC749MX5C;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = PashaCalo;
@@ -595,7 +607,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -651,7 +663,6 @@
 			productName = Supabase;
 		};
 /* End XCSwiftPackageProductDependency section */
-
 	};
 	rootObject = AA0000000000000000000063 /* Project object */;
 }

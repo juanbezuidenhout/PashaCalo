@@ -6,11 +6,15 @@ struct WelcomeView: View {
     @State private var cardOffset: CGFloat = 20
     @State private var cardOpacity: Double = 0
 
-    private let cardWidth: CGFloat = 240
+    private let cardWidth: CGFloat = 260
+
+    // iPhone 15 Pro Max canvas is 1290×2796 (≈ 0.4614 aspect ratio).
+    // Match that so the WebView never letterboxes the phone.
+    private let canvasAspect: CGFloat = 1290.0 / 2796.0
 
     private func cardHeight(for availableHeight: CGFloat) -> CGFloat {
-        let ideal = cardWidth * 19.0 / 9.0
-        let cap = max(280, availableHeight * 0.5)
+        let ideal = cardWidth / canvasAspect
+        let cap = max(360, availableHeight * 0.58)
         return min(ideal, cap)
     }
 
@@ -86,38 +90,12 @@ struct WelcomeView: View {
     }
 
     private func mockupCard(height: CGFloat) -> some View {
-        RoundedRectangle(cornerRadius: 16, style: .continuous)
-            .fill(Color("AppBackground"))
+        PhoneMockupWebView()
             .frame(width: cardWidth, height: height)
-            .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 4)
-            .overlay(
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("残りkcal")
-                        .font(.custom("NotoSansJP-Regular", size: 12))
-                        .foregroundStyle(Color("TextSecondary"))
-
-                    Text("2199")
-                        .font(.custom("NotoSansJP-Bold", size: 28))
-                        .foregroundStyle(Color("AccentBlack"))
-
-                    HStack(spacing: 6) {
-                        Circle()
-                            .fill(Color(red: 0xFF/255, green: 0x6B/255, blue: 0x9D/255))
-                            .frame(width: 8, height: 8)
-                        Circle()
-                            .fill(Color(red: 0xFF/255, green: 0x95/255, blue: 0x00/255))
-                            .frame(width: 8, height: 8)
-                        Circle()
-                            .fill(Color(red: 0x00/255, green: 0x7A/255, blue: 0xFF/255))
-                            .frame(width: 8, height: 8)
-                    }
-                    .padding(.top, 2)
-
-                    Spacer()
-                }
-                .padding(20),
-                alignment: .topLeading
-            )
+            .background(Color.white)
+            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+            .shadow(color: Color.black.opacity(0.10), radius: 20, x: 0, y: 8)
+            .accessibilityLabel("写真を撮るだけで栄養を自動計算するデモ")
     }
 }
 

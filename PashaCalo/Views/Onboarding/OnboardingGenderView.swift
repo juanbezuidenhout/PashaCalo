@@ -13,7 +13,7 @@ struct OnboardingGenderView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             VStack(alignment: .leading, spacing: 8) {
-                Text("性別を教えてください")
+                Text("性別を選択してください")
                     .font(.custom("NotoSansJP-Bold", size: 26))
                     .foregroundStyle(Color("TextPrimary"))
 

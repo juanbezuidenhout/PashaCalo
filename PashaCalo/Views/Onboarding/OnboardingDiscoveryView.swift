@@ -4,21 +4,26 @@ struct OnboardingDiscoveryView: View {
     @EnvironmentObject private var data: OnboardingData
     let onNext: () -> Void
 
+    private enum DiscoveryIcon {
+        case asset(String)
+        case symbol(String)
+    }
+
     private struct DiscoveryOption: Identifiable {
         let id = UUID()
-        let icon: String
+        let icon: DiscoveryIcon
         let label: String
     }
 
     private let options: [DiscoveryOption] = [
-        .init(icon: "camera.fill", label: "Instagram"),
-        .init(icon: "bird", label: "X / Twitter"),
-        .init(icon: "music.note", label: "TikTok"),
-        .init(icon: "hand.thumbsup.fill", label: "Facebook"),
-        .init(icon: "play.rectangle.fill", label: "YouTube"),
-        .init(icon: "person.2.fill", label: "友人・家族"),
-        .init(icon: "applelogo", label: "App Store"),
-        .init(icon: "ellipsis.circle", label: "その他")
+        .init(icon: .asset("InstagramLogo"), label: "Instagram"),
+        .init(icon: .asset("XLogo"), label: "X / Twitter"),
+        .init(icon: .asset("TikTokLogo"), label: "TikTok"),
+        .init(icon: .asset("FacebookLogo"), label: "Facebook"),
+        .init(icon: .asset("YouTubeLogo"), label: "YouTube"),
+        .init(icon: .symbol("person.2.fill"), label: "友人・家族"),
+        .init(icon: .asset("AppStoreLogo"), label: "App Store"),
+        .init(icon: .symbol("ellipsis.circle"), label: "その他")
     ]
 
     private var isSelectionValid: Bool {
@@ -46,10 +51,8 @@ struct OnboardingDiscoveryView: View {
                             data.discoverySource = option.label
                         } content: { selected in
                             HStack(spacing: 14) {
-                                Image(systemName: option.icon)
-                                    .font(.system(size: 22, weight: .regular))
-                                    .foregroundStyle(selected ? .white : Color("TextPrimary"))
-                                    .frame(width: 28)
+                                iconView(for: option.icon, selected: selected)
+                                    .frame(width: 28, height: 28)
 
                                 Text(option.label)
                                     .font(.custom("NotoSansJP-SemiBold", size: 16))
@@ -71,6 +74,21 @@ struct OnboardingDiscoveryView: View {
             .padding(.bottom, 24)
         }
         .padding(.horizontal, 24)
+    }
+
+    @ViewBuilder
+    private func iconView(for icon: DiscoveryIcon, selected: Bool) -> some View {
+        switch icon {
+        case .asset(let name):
+            Image(name)
+                .resizable()
+                .interpolation(.high)
+                .aspectRatio(contentMode: .fit)
+        case .symbol(let name):
+            Image(systemName: name)
+                .font(.system(size: 22, weight: .regular))
+                .foregroundStyle(selected ? .white : Color("TextPrimary"))
+        }
     }
 }
 

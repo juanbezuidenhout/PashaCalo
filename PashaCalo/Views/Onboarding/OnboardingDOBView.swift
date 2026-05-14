@@ -15,11 +15,11 @@ struct OnboardingDOBView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             VStack(alignment: .leading, spacing: 8) {
-                Text("生年月日を教えてください")
+                Text("生年月日を選択してください")
                     .font(.custom("NotoSansJP-Bold", size: 26))
                     .foregroundStyle(Color("TextPrimary"))
 
-                Text("目標kcalの計算に使います")
+                Text("目標カロリーの計算に使用します")
                     .font(.custom("NotoSansJP-Regular", size: 14))
                     .foregroundStyle(Color("TextSecondary"))
             }
