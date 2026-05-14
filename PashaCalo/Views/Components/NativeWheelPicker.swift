@@ -18,8 +18,8 @@ struct NativeWheelPicker: UIViewRepresentable {
         Coordinator(self)
     }
 
-    func makeUIView(context: Context) -> UIPickerView {
-        let picker = UIPickerView()
+    func makeUIView(context: Context) -> IndicatorlessPickerView {
+        let picker = IndicatorlessPickerView()
         picker.dataSource = context.coordinator
         picker.delegate = context.coordinator
         picker.backgroundColor = .clear
@@ -32,9 +32,8 @@ struct NativeWheelPicker: UIViewRepresentable {
         return picker
     }
 
-    func updateUIView(_ uiView: UIPickerView, context: Context) {
+    func updateUIView(_ uiView: IndicatorlessPickerView, context: Context) {
         context.coordinator.parent = self
-        hideDefaultSelectionIndicator(on: uiView)
 
         if let idx = values.firstIndex(of: clampedSelection),
            uiView.selectedRow(inComponent: 0) != idx {
@@ -44,16 +43,6 @@ struct NativeWheelPicker: UIViewRepresentable {
 
     private var clampedSelection: Int {
         min(max(selection, range.lowerBound), range.upperBound)
-    }
-
-    /// The default selection indicator is a thin (~0.5pt) gray bar above
-    /// and below the centered row. We hide them so our SwiftUI pill shows
-    /// through cleanly.
-    private func hideDefaultSelectionIndicator(on pickerView: UIPickerView) {
-        for subview in pickerView.subviews where subview.bounds.height < 2 {
-            subview.backgroundColor = .clear
-            subview.isHidden = true
-        }
     }
 
     final class Coordinator: NSObject, UIPickerViewDataSource, UIPickerViewDelegate {
@@ -109,6 +98,22 @@ struct NativeWheelPicker: UIViewRepresentable {
             if parent.selection != newValue {
                 parent.selection = newValue
             }
+        }
+    }
+}
+
+/// `UIPickerView` subclass that hides the default thin gray selection
+/// indicator bars after every layout pass. Doing this from `layoutSubviews`
+/// (rather than from `updateUIView`) avoids a race where the bars don't yet
+/// exist or all subviews have zero bounds, which previously caused the entire
+/// picker to be hidden on first render.
+final class IndicatorlessPickerView: UIPickerView {
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        for subview in subviews
+        where subview.bounds.height > 0 && subview.bounds.height < 2 {
+            subview.backgroundColor = .clear
+            subview.isHidden = true
         }
     }
 }
