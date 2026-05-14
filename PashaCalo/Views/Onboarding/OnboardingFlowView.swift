@@ -5,7 +5,7 @@ struct OnboardingFlowView: View {
     @StateObject private var data = OnboardingData()
     @State private var step: Int = 1
 
-    private let totalSteps: Double = 10
+    private let totalSteps: Double = 11
 
     var body: some View {
         ZStack {
@@ -44,6 +44,8 @@ struct OnboardingFlowView: View {
                             OnboardingGoalWeightView(onNext: advance)
                         }
                     case 10:
+                        OnboardingDietView(onNext: advance)
+                    case 11:
                         OnboardingCompleteView()
                     default:
                         placeholder
@@ -90,7 +92,7 @@ struct OnboardingFlowView: View {
 
     private func advance() {
         // Users who picked "lose" don't need step 9 (neither the goal-weight
-        // wheel nor the barriers list), so jump straight to the complete view.
+        // wheel nor the barriers list), so jump straight to the diet step.
         if step == 8, data.goalDirection == OnboardingData.GoalDirection.lose {
             step = 10
             return

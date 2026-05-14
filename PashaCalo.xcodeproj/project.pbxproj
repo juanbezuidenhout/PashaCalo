@@ -55,6 +55,7 @@
 		AA000000000000000000007C /* NativeWheelPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000007B /* NativeWheelPicker.swift */; };
 		AA0000000000000000000080 /* HorizontalRulerPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000007F /* HorizontalRulerPicker.swift */; };
 		AA0000000000000000000082 /* OnboardingBarriersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000081 /* OnboardingBarriersView.swift */; };
+		AA0000000000000000000084 /* OnboardingDietView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000083 /* OnboardingDietView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -106,6 +107,7 @@
 		AA000000000000000000007B /* NativeWheelPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeWheelPicker.swift; sourceTree = "<group>"; };
 		AA000000000000000000007F /* HorizontalRulerPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalRulerPicker.swift; sourceTree = "<group>"; };
 		AA0000000000000000000081 /* OnboardingBarriersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingBarriersView.swift; sourceTree = "<group>"; };
+		AA0000000000000000000083 /* OnboardingDietView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingDietView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -243,6 +245,7 @@
 				AA0000000000000000000033 /* OnboardingCompleteView.swift */,
 				AA0000000000000000000035 /* OnboardingDOBView.swift */,
 				AA0000000000000000000037 /* OnboardingData.swift */,
+				AA0000000000000000000083 /* OnboardingDietView.swift */,
 				AA0000000000000000000039 /* OnboardingDiscoveryView.swift */,
 				AA000000000000000000003B /* OnboardingFlowView.swift */,
 				AA000000000000000000003D /* OnboardingGenderView.swift */,
@@ -434,6 +437,7 @@
 				AA0000000000000000000034 /* OnboardingCompleteView.swift in Sources */,
 				AA0000000000000000000036 /* OnboardingDOBView.swift in Sources */,
 				AA0000000000000000000038 /* OnboardingData.swift in Sources */,
+				AA0000000000000000000084 /* OnboardingDietView.swift in Sources */,
 				AA000000000000000000003A /* OnboardingDiscoveryView.swift in Sources */,
 				AA000000000000000000003C /* OnboardingFlowView.swift in Sources */,
 				AA000000000000000000003E /* OnboardingGenderView.swift in Sources */,

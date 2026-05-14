@@ -26,6 +26,9 @@ final class OnboardingData: ObservableObject {
     // locale-independent.
     @Published var barriers: Set<String> = []
 
+    // Stable English key from `DietStyle`. Empty string means not yet selected.
+    @Published var dietStyle: String = ""
+
     enum GoalDirection {
         static let lose = "lose"
         static let maintain = "maintain"
@@ -38,5 +41,12 @@ final class OnboardingData: ObservableObject {
         static let support = "support"
         static let busySchedule = "busy_schedule"
         static let mealInspiration = "meal_inspiration"
+    }
+
+    enum DietStyle {
+        static let classic = "classic"
+        static let pescatarian = "pescatarian"
+        static let vegetarian = "vegetarian"
+        static let vegan = "vegan"
     }
 }
