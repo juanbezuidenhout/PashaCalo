@@ -4,93 +4,164 @@ struct OnboardingGoalWeightView: View {
     @EnvironmentObject private var data: OnboardingData
     let onNext: () -> Void
 
-    @State private var goalWeightKg: Int = 60
+    @State private var goalWeightKg: Double = 60
 
-    private let goalRange: ClosedRange<Int> = 30...200
+    private let goalRange: ClosedRange<Double> = 30...200
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 24) {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("目標体重を入力してください")
-                    .font(.custom("NotoSansJP-Bold", size: 26))
-                    .foregroundStyle(Color("TextPrimary"))
-                    .fixedSize(horizontal: false, vertical: true)
+        VStack(alignment: .leading, spacing: 0) {
+            Text("目標体重は？")
+                .font(.custom("NotoSansJP-Bold", size: 26))
+                .foregroundStyle(Color("TextPrimary"))
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, 24)
+                .padding(.top, 28)
 
-                Text("無理のない目標が長続きのコツです")
-                    .font(.custom("NotoSansJP-Regular", size: 14))
+            Spacer(minLength: 24)
+
+            VStack(spacing: 6) {
+                Text(directionLabel)
+                    .font(.custom("NotoSansJP-Regular", size: 16))
                     .foregroundStyle(Color("TextSecondary"))
+
+                Text(formattedValue)
+                    .font(.system(size: 44, weight: .bold))
+                    .foregroundStyle(Color("TextPrimary"))
+                    .monospacedDigit()
             }
-            .padding(.top, 28)
+            .frame(maxWidth: .infinity)
 
-            pickerSection
-                .padding(.top, 8)
+            HorizontalRulerPicker(
+                value: $goalWeightKg,
+                range: goalRange
+            )
+            .frame(height: 110)
+            .padding(.top, 18)
 
-            Spacer()
+            Spacer(minLength: 0)
+
+            if let warning = healthWarning {
+                warningCard(title: warning.title, message: warning.message)
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 14)
+                    .transition(.opacity)
+            }
 
             PrimaryButton(title: "次へ") {
                 commit()
                 onNext()
             }
+            .padding(.horizontal, 24)
             .padding(.bottom, 24)
         }
-        .padding(.horizontal, 24)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .animation(.easeInOut(duration: 0.18), value: healthWarning?.title)
         .onAppear { syncFromData() }
     }
 
-    private var pickerSection: some View {
-        wheelColumn(label: "目標体重") {
-            NativeWheelPicker(
-                selection: $goalWeightKg,
-                range: goalRange,
-                unit: "kg"
+    // MARK: - Derived state
+
+    private var formattedValue: String {
+        String(format: "%.1f kg", goalWeightKg)
+    }
+
+    private var directionLabel: String {
+        switch data.goalDirection {
+        case OnboardingData.GoalDirection.lose: return "体重を減らす"
+        case OnboardingData.GoalDirection.gain: return "体重を増やす"
+        default: return "目標体重"
+        }
+    }
+
+    /// BMI based on the user's stored height and the currently picked goal
+    /// weight. Returns `nil` if we don't yet have a height to compare against.
+    private var goalBMI: Double? {
+        guard data.heightCm > 0 else { return nil }
+        let heightM = data.heightCm / 100.0
+        return goalWeightKg / (heightM * heightM)
+    }
+
+    private var healthWarning: (title: String, message: String)? {
+        guard let bmi = goalBMI else { return nil }
+        if bmi < 18.5 {
+            return (
+                title: "目標が低すぎる可能性があります",
+                message: "あなたの身長に対して健康的な範囲を下回っています"
             )
         }
-        .frame(height: 280)
-    }
-
-    @ViewBuilder
-    private func wheelColumn<Picker: View>(
-        label: String,
-        @ViewBuilder picker: () -> Picker
-    ) -> some View {
-        VStack(spacing: 14) {
-            Text(label)
-                .font(.custom("NotoSansJP-Bold", size: 18))
-                .foregroundStyle(Color("TextPrimary"))
-
-            ZStack {
-                Capsule(style: .continuous)
-                    .fill(Color(.systemGray5))
-                    .frame(height: 40)
-                    .padding(.horizontal, 6)
-
-                picker()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
-            .frame(maxHeight: .infinity)
+        if bmi > 30 {
+            return (
+                title: "目標が高すぎる可能性があります",
+                message: "あなたの身長に対して健康的な範囲を上回っています"
+            )
         }
-        .frame(maxWidth: .infinity)
+        return nil
     }
+
+    // MARK: - Warning card
+
+    private func warningCard(title: String, message: String) -> some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(Color(red: 0.93, green: 0.62, blue: 0.16))
+                .padding(.top, 2)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.custom("NotoSansJP-Bold", size: 14))
+                    .foregroundStyle(Color("TextPrimary"))
+                Text(message)
+                    .font(.custom("NotoSansJP-Regular", size: 13))
+                    .foregroundStyle(Color("TextSecondary"))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .padding(.vertical, 12)
+        .padding(.horizontal, 14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(Color(red: 1.0, green: 0.95, blue: 0.86))
+        )
+    }
+
+    // MARK: - State sync
 
     private func syncFromData() {
+        let clampedRange = goalRange
         if data.goalWeightKg > 0 {
-            goalWeightKg = clamp(Int(data.goalWeightKg.rounded()), to: goalRange)
-        } else if data.weightKg > 0 {
-            goalWeightKg = clamp(Int(data.weightKg.rounded()), to: goalRange)
+            goalWeightKg = clamp(data.goalWeightKg, to: clampedRange)
+            return
+        }
+
+        if data.weightKg > 0 {
+            switch data.goalDirection {
+            case OnboardingData.GoalDirection.lose:
+                goalWeightKg = clamp(data.weightKg - 5, to: clampedRange)
+            case OnboardingData.GoalDirection.gain:
+                goalWeightKg = clamp(data.weightKg + 5, to: clampedRange)
+            default:
+                goalWeightKg = clamp(data.weightKg, to: clampedRange)
+            }
         }
     }
 
-    private func clamp(_ value: Int, to range: ClosedRange<Int>) -> Int {
+    private func clamp(_ value: Double, to range: ClosedRange<Double>) -> Double {
         min(max(value, range.lowerBound), range.upperBound)
     }
 
     private func commit() {
-        data.goalWeightKg = Double(goalWeightKg)
+        data.goalWeightKg = (goalWeightKg * 10).rounded() / 10
     }
 }
 
 #Preview {
-    OnboardingGoalWeightView(onNext: {})
-        .environmentObject(OnboardingData())
+    let data = OnboardingData()
+    data.goalDirection = OnboardingData.GoalDirection.lose
+    data.heightCm = 168
+    data.weightKg = 60
+    return OnboardingGoalWeightView(onNext: {})
+        .environmentObject(data)
         .background(Color("AppBackground"))
 }

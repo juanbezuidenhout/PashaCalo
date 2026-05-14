@@ -53,6 +53,7 @@
 		AA0000000000000000000078 /* onboarding_video.html in Resources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000077 /* onboarding_video.html */; };
 		AA000000000000000000007A /* BrandLogos.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000079 /* BrandLogos.xcassets */; };
 		AA000000000000000000007C /* NativeWheelPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000007B /* NativeWheelPicker.swift */; };
+		AA0000000000000000000080 /* HorizontalRulerPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000007F /* HorizontalRulerPicker.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -102,6 +103,7 @@
 		AA0000000000000000000077 /* onboarding_video.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = onboarding_video.html; sourceTree = "<group>"; };
 		AA0000000000000000000079 /* BrandLogos.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = BrandLogos.xcassets; sourceTree = "<group>"; };
 		AA000000000000000000007B /* NativeWheelPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeWheelPicker.swift; sourceTree = "<group>"; };
+		AA000000000000000000007F /* HorizontalRulerPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalRulerPicker.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -190,6 +192,7 @@
 				AA0000000000000000000019 /* PrimaryButton.swift */,
 				AA0000000000000000000075 /* PhoneMockupWebView.swift */,
 				AA000000000000000000007B /* NativeWheelPicker.swift */,
+				AA000000000000000000007F /* HorizontalRulerPicker.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -447,6 +450,7 @@
 				AA000000000000000000005E /* WelcomeView.swift in Sources */,
 				AA0000000000000000000076 /* PhoneMockupWebView.swift in Sources */,
 				AA000000000000000000007C /* NativeWheelPicker.swift in Sources */,
+				AA0000000000000000000080 /* HorizontalRulerPicker.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
