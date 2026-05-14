@@ -6,49 +6,63 @@ struct WelcomeView: View {
     @State private var cardOffset: CGFloat = 20
     @State private var cardOpacity: Double = 0
 
-    private let cardWidth: CGFloat = 260
-    private var cardHeight: CGFloat { cardWidth * 19.0 / 9.0 }
+    private let cardWidth: CGFloat = 240
+
+    private func cardHeight(for availableHeight: CGFloat) -> CGFloat {
+        let ideal = cardWidth * 19.0 / 9.0
+        let cap = max(280, availableHeight * 0.5)
+        return min(ideal, cap)
+    }
+
+    private func headlineSize(for screenWidth: CGFloat) -> CGFloat {
+        screenWidth < 360 ? 26 : (screenWidth < 400 ? 28 : 30)
+    }
 
     var body: some View {
-        ZStack {
-            Color.white.ignoresSafeArea()
+        GeometryReader { proxy in
+            ZStack {
+                Color.white.ignoresSafeArea()
 
-            VStack(spacing: 0) {
-                HStack {
-                    Spacer()
-                    languagePill
+                VStack(spacing: 0) {
+                    HStack {
+                        Spacer()
+                        languagePill
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.top, 12)
+
+                    Spacer(minLength: 12)
+
+                    mockupCard(height: cardHeight(for: proxy.size.height))
+                        .offset(y: cardOffset)
+                        .opacity(cardOpacity)
+
+                    Spacer(minLength: 20)
+
+                    VStack(spacing: 12) {
+                        Text("写真を撮るだけで、\n食事記録が終わる")
+                            .font(.custom("NotoSansJP-SemiBold", size: headlineSize(for: proxy.size.width)))
+                            .foregroundStyle(Color("AccentBlack"))
+                            .multilineTextAlignment(.center)
+                            .lineSpacing(4)
+                            .fixedSize(horizontal: false, vertical: true)
+
+                        Text("カロリーとPFCを自動で記録")
+                            .font(.custom("NotoSansJP-Regular", size: 15))
+                            .foregroundStyle(Color("TextSecondary"))
+                            .multilineTextAlignment(.center)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .padding(.horizontal, 24)
+
+                    Spacer(minLength: 24)
+
+                    PrimaryButton(title: "はじめる") {
+                        appState.completeWelcome()
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 32)
                 }
-                .padding(.horizontal, 24)
-                .padding(.top, 12)
-
-                Spacer()
-
-                mockupCard
-                    .offset(y: cardOffset)
-                    .opacity(cardOpacity)
-
-                Spacer().frame(height: 24)
-
-                VStack(spacing: 10) {
-                    Text("カロリー管理を、もっと簡単に")
-                        .font(.custom("NotoSansJP-Bold", size: 26))
-                        .foregroundStyle(Color("AccentBlack"))
-                        .multilineTextAlignment(.center)
-
-                    Text("写真を撮るだけで栄養を自動計算")
-                        .font(.custom("NotoSansJP-Regular", size: 15))
-                        .foregroundStyle(Color("TextSecondary"))
-                        .multilineTextAlignment(.center)
-                }
-                .padding(.horizontal, 24)
-
-                Spacer()
-
-                PrimaryButton(title: "はじめる") {
-                    appState.completeWelcome()
-                }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 32)
             }
         }
         .onAppear {
@@ -71,10 +85,10 @@ struct WelcomeView: View {
             )
     }
 
-    private var mockupCard: some View {
+    private func mockupCard(height: CGFloat) -> some View {
         RoundedRectangle(cornerRadius: 16, style: .continuous)
             .fill(Color("AppBackground"))
-            .frame(width: cardWidth, height: cardHeight)
+            .frame(width: cardWidth, height: height)
             .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 4)
             .overlay(
                 VStack(alignment: .leading, spacing: 6) {
