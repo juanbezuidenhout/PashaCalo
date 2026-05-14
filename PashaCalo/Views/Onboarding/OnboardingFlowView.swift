@@ -5,7 +5,7 @@ struct OnboardingFlowView: View {
     @StateObject private var data = OnboardingData()
     @State private var step: Int = 1
 
-    private let totalSteps: Double = 9
+    private let totalSteps: Double = 10
 
     var body: some View {
         ZStack {
@@ -32,8 +32,10 @@ struct OnboardingFlowView: View {
                     case 7:
                         OnboardingHeightWeightView(onNext: advance)
                     case 8:
-                        OnboardingGoalWeightView(onNext: advance)
+                        OnboardingGoalDirectionView(onNext: advance)
                     case 9:
+                        OnboardingGoalWeightView(onNext: advance)
+                    case 10:
                         OnboardingCompleteView()
                     default:
                         placeholder
@@ -79,6 +81,13 @@ struct OnboardingFlowView: View {
     }
 
     private func advance() {
+        // After picking a goal direction, "maintain" users skip the goal-weight
+        // wheel (step 9) and go straight to the next screen.
+        if step == 8, data.goalDirection == OnboardingData.GoalDirection.maintain {
+            step = 10
+            return
+        }
+
         if step < Int(totalSteps) {
             step += 1
         } else {

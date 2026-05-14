@@ -32,6 +32,7 @@
 		AA000000000000000000003A /* OnboardingDiscoveryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000039 /* OnboardingDiscoveryView.swift */; };
 		AA000000000000000000003C /* OnboardingFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000003B /* OnboardingFlowView.swift */; };
 		AA000000000000000000003E /* OnboardingGenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000003D /* OnboardingGenderView.swift */; };
+		AA000000000000000000007E /* OnboardingGoalDirectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000007D /* OnboardingGoalDirectionView.swift */; };
 		AA0000000000000000000040 /* OnboardingGoalWeightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000003F /* OnboardingGoalWeightView.swift */; };
 		AA0000000000000000000042 /* OnboardingGraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000041 /* OnboardingGraphView.swift */; };
 		AA0000000000000000000044 /* OnboardingHeightWeightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000043 /* OnboardingHeightWeightView.swift */; };
@@ -80,6 +81,7 @@
 		AA0000000000000000000039 /* OnboardingDiscoveryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingDiscoveryView.swift; sourceTree = "<group>"; };
 		AA000000000000000000003B /* OnboardingFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlowView.swift; sourceTree = "<group>"; };
 		AA000000000000000000003D /* OnboardingGenderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingGenderView.swift; sourceTree = "<group>"; };
+		AA000000000000000000007D /* OnboardingGoalDirectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingGoalDirectionView.swift; sourceTree = "<group>"; };
 		AA000000000000000000003F /* OnboardingGoalWeightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingGoalWeightView.swift; sourceTree = "<group>"; };
 		AA0000000000000000000041 /* OnboardingGraphView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingGraphView.swift; sourceTree = "<group>"; };
 		AA0000000000000000000043 /* OnboardingHeightWeightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingHeightWeightView.swift; sourceTree = "<group>"; };
@@ -238,6 +240,7 @@
 				AA0000000000000000000039 /* OnboardingDiscoveryView.swift */,
 				AA000000000000000000003B /* OnboardingFlowView.swift */,
 				AA000000000000000000003D /* OnboardingGenderView.swift */,
+				AA000000000000000000007D /* OnboardingGoalDirectionView.swift */,
 				AA000000000000000000003F /* OnboardingGoalWeightView.swift */,
 				AA0000000000000000000041 /* OnboardingGraphView.swift */,
 				AA0000000000000000000043 /* OnboardingHeightWeightView.swift */,
@@ -427,6 +430,7 @@
 				AA000000000000000000003A /* OnboardingDiscoveryView.swift in Sources */,
 				AA000000000000000000003C /* OnboardingFlowView.swift in Sources */,
 				AA000000000000000000003E /* OnboardingGenderView.swift in Sources */,
+				AA000000000000000000007E /* OnboardingGoalDirectionView.swift in Sources */,
 				AA0000000000000000000040 /* OnboardingGoalWeightView.swift in Sources */,
 				AA0000000000000000000042 /* OnboardingGraphView.swift in Sources */,
 				AA0000000000000000000044 /* OnboardingHeightWeightView.swift in Sources */,

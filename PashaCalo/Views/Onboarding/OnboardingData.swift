@@ -17,4 +17,13 @@ final class OnboardingData: ObservableObject {
     @Published var goalWeightKg: Double = 0
     @Published var discoverySource: String = ""
     @Published var hasTriedOtherApps: Bool? = nil
+
+    // "lose" | "maintain" | "gain". Empty string means not yet selected.
+    @Published var goalDirection: String = ""
+
+    enum GoalDirection {
+        static let lose = "lose"
+        static let maintain = "maintain"
+        static let gain = "gain"
+    }
 }
