@@ -4,24 +4,11 @@ struct OnboardingHeightWeightView: View {
     @EnvironmentObject private var data: OnboardingData
     let onNext: () -> Void
 
-    @State private var heightText: String = ""
-    @State private var weightText: String = ""
+    @State private var heightCm: Int = 168
+    @State private var weightKg: Int = 60
 
-    private var heightValue: Double? {
-        let value = Double(heightText)
-        guard let value, value > 0 else { return nil }
-        return value
-    }
-
-    private var weightValue: Double? {
-        let value = Double(weightText)
-        guard let value, value > 0 else { return nil }
-        return value
-    }
-
-    private var isValid: Bool {
-        heightValue != nil && weightValue != nil
-    }
+    private let heightRange: ClosedRange<Int> = 100...230
+    private let weightRange: ClosedRange<Int> = 30...200
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
@@ -37,21 +24,8 @@ struct OnboardingHeightWeightView: View {
             }
             .padding(.top, 28)
 
-            VStack(spacing: 12) {
-                inputRow(
-                    label: "身長",
-                    text: $heightText,
-                    unit: "cm",
-                    keyboard: .numberPad
-                )
-
-                inputRow(
-                    label: "体重",
-                    text: $weightText,
-                    unit: "kg",
-                    keyboard: .decimalPad
-                )
-            }
+            pickerSection
+                .padding(.top, 8)
 
             Spacer()
 
@@ -59,76 +33,72 @@ struct OnboardingHeightWeightView: View {
                 commit()
                 onNext()
             }
-            .disabled(!isValid)
-            .opacity(isValid ? 1.0 : 0.4)
             .padding(.bottom, 24)
         }
         .padding(.horizontal, 24)
         .onAppear { syncFromData() }
     }
 
-    private func inputRow(
-        label: String,
-        text: Binding<String>,
-        unit: String,
-        keyboard: UIKeyboardType
-    ) -> some View {
-        HStack(spacing: 12) {
-            Text(label)
-                .font(.custom("NotoSansJP-SemiBold", size: 16))
-                .foregroundStyle(Color("TextPrimary"))
-                .frame(width: 72, alignment: .leading)
-
-            TextField("", text: text)
-                .keyboardType(keyboard)
-                .font(.custom("NotoSansJP-Regular", size: 18))
-                .foregroundStyle(Color("TextPrimary"))
-                .multilineTextAlignment(.trailing)
-                .frame(maxWidth: .infinity)
-
-            Text(unit)
-                .font(.custom("NotoSansJP-Regular", size: 14))
-                .foregroundStyle(Color("TextSecondary"))
-                .frame(width: 32, alignment: .trailing)
+    private var pickerSection: some View {
+        HStack(alignment: .top, spacing: 12) {
+            wheelColumn(label: "身長") {
+                NativeWheelPicker(
+                    selection: $heightCm,
+                    range: heightRange,
+                    unit: "cm"
+                )
+            }
+            wheelColumn(label: "体重") {
+                NativeWheelPicker(
+                    selection: $weightKg,
+                    range: weightRange,
+                    unit: "kg"
+                )
+            }
         }
-        .padding(.horizontal, 18)
-        .frame(height: 64)
-        .background(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(Color("CardBackground"))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(Color("BorderLight"), lineWidth: 1)
-        )
+        .frame(height: 280)
+    }
+
+    @ViewBuilder
+    private func wheelColumn<Picker: View>(
+        label: String,
+        @ViewBuilder picker: () -> Picker
+    ) -> some View {
+        VStack(spacing: 14) {
+            Text(label)
+                .font(.custom("NotoSansJP-Bold", size: 18))
+                .foregroundStyle(Color("TextPrimary"))
+
+            ZStack {
+                Capsule(style: .continuous)
+                    .fill(Color(.systemGray5))
+                    .frame(height: 40)
+                    .padding(.horizontal, 6)
+
+                picker()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            .frame(maxHeight: .infinity)
+        }
+        .frame(maxWidth: .infinity)
     }
 
     private func syncFromData() {
-        if data.heightCm > 0 && heightText.isEmpty {
-            heightText = formatNumber(data.heightCm, allowsDecimal: false)
+        if data.heightCm > 0 {
+            heightCm = clamp(Int(data.heightCm.rounded()), to: heightRange)
         }
-        if data.weightKg > 0 && weightText.isEmpty {
-            weightText = formatNumber(data.weightKg, allowsDecimal: true)
+        if data.weightKg > 0 {
+            weightKg = clamp(Int(data.weightKg.rounded()), to: weightRange)
         }
     }
 
-    private func formatNumber(_ value: Double, allowsDecimal: Bool) -> String {
-        if allowsDecimal {
-            return value.truncatingRemainder(dividingBy: 1) == 0
-                ? String(Int(value))
-                : String(value)
-        } else {
-            return String(Int(value))
-        }
+    private func clamp(_ value: Int, to range: ClosedRange<Int>) -> Int {
+        min(max(value, range.lowerBound), range.upperBound)
     }
 
     private func commit() {
-        if let height = heightValue {
-            data.heightCm = height
-        }
-        if let weight = weightValue {
-            data.weightKg = weight
-        }
+        data.heightCm = Double(heightCm)
+        data.weightKg = Double(weightKg)
     }
 }
 
