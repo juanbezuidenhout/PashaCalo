@@ -34,7 +34,15 @@ struct OnboardingFlowView: View {
                     case 8:
                         OnboardingGoalDirectionView(onNext: advance)
                     case 9:
-                        OnboardingGoalWeightView(onNext: advance)
+                        // Step 9 branches off the chosen goal direction:
+                        //   - maintain → ask which barriers are holding them back
+                        //   - gain     → pick a target weight on the ruler
+                        //   - lose     → skipped entirely in `advance()` below
+                        if data.goalDirection == OnboardingData.GoalDirection.maintain {
+                            OnboardingBarriersView(onNext: advance)
+                        } else {
+                            OnboardingGoalWeightView(onNext: advance)
+                        }
                     case 10:
                         OnboardingCompleteView()
                     default:
@@ -81,9 +89,9 @@ struct OnboardingFlowView: View {
     }
 
     private func advance() {
-        // The goal-weight wheel (step 9) is only shown when the user wants to
-        // gain weight. Lose / maintain users skip straight to the next step.
-        if step == 8, data.goalDirection != OnboardingData.GoalDirection.gain {
+        // Users who picked "lose" don't need step 9 (neither the goal-weight
+        // wheel nor the barriers list), so jump straight to the complete view.
+        if step == 8, data.goalDirection == OnboardingData.GoalDirection.lose {
             step = 10
             return
         }

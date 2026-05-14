@@ -21,9 +21,22 @@ final class OnboardingData: ObservableObject {
     // "lose" | "maintain" | "gain". Empty string means not yet selected.
     @Published var goalDirection: String = ""
 
+    // Only collected when the user picks `maintain` as their goal direction.
+    // Stores the stable English keys (see `Barrier`) so analytics stays
+    // locale-independent.
+    @Published var barriers: Set<String> = []
+
     enum GoalDirection {
         static let lose = "lose"
         static let maintain = "maintain"
         static let gain = "gain"
+    }
+
+    enum Barrier {
+        static let consistency = "consistency"
+        static let eatingHabits = "eating_habits"
+        static let support = "support"
+        static let busySchedule = "busy_schedule"
+        static let mealInspiration = "meal_inspiration"
     }
 }

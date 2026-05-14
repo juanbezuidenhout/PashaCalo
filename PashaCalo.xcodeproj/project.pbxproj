@@ -54,6 +54,7 @@
 		AA000000000000000000007A /* BrandLogos.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000079 /* BrandLogos.xcassets */; };
 		AA000000000000000000007C /* NativeWheelPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000007B /* NativeWheelPicker.swift */; };
 		AA0000000000000000000080 /* HorizontalRulerPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000007F /* HorizontalRulerPicker.swift */; };
+		AA0000000000000000000082 /* OnboardingBarriersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000081 /* OnboardingBarriersView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -104,6 +105,7 @@
 		AA0000000000000000000079 /* BrandLogos.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = BrandLogos.xcassets; sourceTree = "<group>"; };
 		AA000000000000000000007B /* NativeWheelPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeWheelPicker.swift; sourceTree = "<group>"; };
 		AA000000000000000000007F /* HorizontalRulerPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalRulerPicker.swift; sourceTree = "<group>"; };
+		AA0000000000000000000081 /* OnboardingBarriersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingBarriersView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -237,6 +239,7 @@
 			isa = PBXGroup;
 			children = (
 				AA0000000000000000000030 /* OnboardingActivityView.swift */,
+				AA0000000000000000000081 /* OnboardingBarriersView.swift */,
 				AA0000000000000000000033 /* OnboardingCompleteView.swift */,
 				AA0000000000000000000035 /* OnboardingDOBView.swift */,
 				AA0000000000000000000037 /* OnboardingData.swift */,
@@ -427,6 +430,7 @@
 				AA000000000000000000002B /* GroupsView.swift in Sources */,
 				AA000000000000000000002E /* MilestonesView.swift in Sources */,
 				AA0000000000000000000031 /* OnboardingActivityView.swift in Sources */,
+				AA0000000000000000000082 /* OnboardingBarriersView.swift in Sources */,
 				AA0000000000000000000034 /* OnboardingCompleteView.swift in Sources */,
 				AA0000000000000000000036 /* OnboardingDOBView.swift in Sources */,
 				AA0000000000000000000038 /* OnboardingData.swift in Sources */,
