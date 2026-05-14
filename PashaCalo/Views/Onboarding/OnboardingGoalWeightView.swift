@@ -10,33 +10,34 @@ struct OnboardingGoalWeightView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("目標体重を設定してください")
-                .font(.custom("NotoSansJP-Bold", size: 26))
+            Text("理想の体重は\nどのくらいですか？")
+                .font(.custom("NotoSansJP-Bold", size: 28))
                 .foregroundStyle(Color("TextPrimary"))
+                .lineSpacing(2)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.horizontal, 24)
                 .padding(.top, 28)
 
-            Spacer(minLength: 24)
+            Spacer(minLength: 0)
 
-            VStack(spacing: 6) {
-                Text(directionLabel)
+            VStack(spacing: 8) {
+                Text("体重を増やす")
                     .font(.custom("NotoSansJP-Regular", size: 16))
                     .foregroundStyle(Color("TextSecondary"))
 
                 Text(formattedValue)
-                    .font(.system(size: 44, weight: .bold))
+                    .font(.system(size: 46, weight: .bold))
                     .foregroundStyle(Color("TextPrimary"))
                     .monospacedDigit()
             }
             .frame(maxWidth: .infinity)
+            .padding(.bottom, 14)
 
             HorizontalRulerPicker(
                 value: $goalWeightKg,
                 range: goalRange
             )
-            .frame(height: 110)
-            .padding(.top, 18)
+            .frame(height: 120)
 
             Spacer(minLength: 0)
 
@@ -63,14 +64,6 @@ struct OnboardingGoalWeightView: View {
 
     private var formattedValue: String {
         String(format: "%.1f kg", goalWeightKg)
-    }
-
-    private var directionLabel: String {
-        switch data.goalDirection {
-        case OnboardingData.GoalDirection.lose: return "体重を減らす"
-        case OnboardingData.GoalDirection.gain: return "体重を増やす"
-        default: return "目標体重"
-        }
     }
 
     /// BMI based on the user's stored height and the currently picked goal
@@ -129,21 +122,13 @@ struct OnboardingGoalWeightView: View {
     // MARK: - State sync
 
     private func syncFromData() {
-        let clampedRange = goalRange
         if data.goalWeightKg > 0 {
-            goalWeightKg = clamp(data.goalWeightKg, to: clampedRange)
+            goalWeightKg = clamp(data.goalWeightKg, to: goalRange)
             return
         }
 
         if data.weightKg > 0 {
-            switch data.goalDirection {
-            case OnboardingData.GoalDirection.lose:
-                goalWeightKg = clamp(data.weightKg - 5, to: clampedRange)
-            case OnboardingData.GoalDirection.gain:
-                goalWeightKg = clamp(data.weightKg + 5, to: clampedRange)
-            default:
-                goalWeightKg = clamp(data.weightKg, to: clampedRange)
-            }
+            goalWeightKg = clamp(data.weightKg + 5, to: goalRange)
         }
     }
 
@@ -158,9 +143,9 @@ struct OnboardingGoalWeightView: View {
 
 #Preview {
     let data = OnboardingData()
-    data.goalDirection = OnboardingData.GoalDirection.lose
-    data.heightCm = 168
-    data.weightKg = 60
+    data.goalDirection = OnboardingData.GoalDirection.gain
+    data.heightCm = 172
+    data.weightKg = 54
     return OnboardingGoalWeightView(onNext: {})
         .environmentObject(data)
         .background(Color("AppBackground"))

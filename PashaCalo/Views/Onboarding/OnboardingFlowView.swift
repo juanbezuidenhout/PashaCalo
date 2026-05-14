@@ -81,9 +81,9 @@ struct OnboardingFlowView: View {
     }
 
     private func advance() {
-        // After picking a goal direction, "maintain" users skip the goal-weight
-        // wheel (step 9) and go straight to the next screen.
-        if step == 8, data.goalDirection == OnboardingData.GoalDirection.maintain {
+        // The goal-weight wheel (step 9) is only shown when the user wants to
+        // gain weight. Lose / maintain users skip straight to the next step.
+        if step == 8, data.goalDirection != OnboardingData.GoalDirection.gain {
             step = 10
             return
         }

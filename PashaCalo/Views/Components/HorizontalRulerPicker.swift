@@ -1,11 +1,12 @@
 import SwiftUI
 import UIKit
 
-/// A horizontal ruler-style value picker, modelled on the one Cal AI uses
-/// for goal weight. A long strip of tick marks slides horizontally under a
-/// fixed split background — white on the left half, light grey on the right
-/// half — so the value at the centre of the screen is always the selection.
-/// No separate pointer is drawn; the colour boundary IS the indicator.
+/// A horizontal ruler-style value picker. A long strip of tick marks slides
+/// horizontally under a fixed split background — light grey on the left half
+/// (the "passed" portion) and white on the right half (the "remaining"
+/// portion) — so the value at the centre of the screen is always the
+/// selection. No separate pointer is drawn; the colour boundary IS the
+/// indicator.
 ///
 /// - Smooth native momentum scrolling.
 /// - Snaps to the nearest `step` when the user lets go.
@@ -37,10 +38,7 @@ struct HorizontalRulerPicker: UIViewRepresentable {
         host.scrollView.delegate = context.coordinator
         host.coordinator = context.coordinator
         context.coordinator.host = host
-
-        DispatchQueue.main.async {
-            host.scrollToValue(clampedValue, animated: false)
-        }
+        host.pendingInitialValue = clampedValue
         return host
     }
 
@@ -139,6 +137,10 @@ final class RulerHostView: UIView {
     private let rightBackground = UIView()
     weak var coordinator: HorizontalRulerPicker.Coordinator?
 
+    /// Value to scroll to on the first layout pass that has a non-zero width.
+    /// Avoids the race between `makeUIView` and the first `layoutSubviews`.
+    var pendingInitialValue: Double?
+
     private var range: ClosedRange<Double> = 0...100
     private var step: Double = 0.1
     private var pointsPerStep: CGFloat = 8
@@ -156,17 +158,17 @@ final class RulerHostView: UIView {
     private func setUp() {
         clipsToBounds = true
 
-        leftBackground.backgroundColor = UIColor.systemBackground
-        rightBackground.backgroundColor = UIColor(white: 0.86, alpha: 1.0)
+        leftBackground.backgroundColor = UIColor(white: 0.84, alpha: 1.0)
+        rightBackground.backgroundColor = UIColor.systemBackground
         addSubview(leftBackground)
         addSubview(rightBackground)
 
         scrollView.backgroundColor = .clear
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.showsVerticalScrollIndicator = false
-        scrollView.decelerationRate = .fast
-        scrollView.bounces = false
-        scrollView.alwaysBounceHorizontal = false
+        scrollView.decelerationRate = UIScrollView.DecelerationRate(rawValue: 0.992)
+        scrollView.bounces = true
+        scrollView.alwaysBounceHorizontal = true
         scrollView.alwaysBounceVertical = false
         addSubview(scrollView)
 
@@ -212,6 +214,11 @@ final class RulerHostView: UIView {
         tickStrip.frame = CGRect(x: 0, y: 0, width: contentWidth, height: bounds.height)
         scrollView.contentSize = CGSize(width: contentWidth, height: bounds.height)
         scrollView.contentInset = UIEdgeInsets(top: 0, left: halfWidth, bottom: 0, right: halfWidth)
+
+        if let target = pendingInitialValue, bounds.width > 0 {
+            scrollToValue(target, animated: false)
+            pendingInitialValue = nil
+        }
     }
 
     // MARK: - Coordinate conversion
@@ -257,17 +264,18 @@ final class TickStripView: UIView {
 
     override func draw(_ rect: CGRect) {
         guard let ctx = UIGraphicsGetCurrentContext() else { return }
-        let tickColor = UIColor.label.withAlphaComponent(0.55)
-        ctx.setStrokeColor(tickColor.cgColor)
-        ctx.setLineCap(.butt)
+        ctx.setLineCap(.round)
 
         let totalSteps = Int(((range.upperBound - range.lowerBound) / step).rounded())
         let firstIndex = max(0, Int(floor(rect.minX / pointsPerStep)) - 1)
         let lastIndex = min(totalSteps, Int(ceil(rect.maxX / pointsPerStep)) + 1)
 
-        let majorH = bounds.height * 0.55
-        let minorH = bounds.height * 0.28
+        let majorH = bounds.height * 0.52
+        let minorH = bounds.height * 0.24
         let centerY = bounds.height * 0.55
+
+        let majorColor = UIColor.label.withAlphaComponent(0.78)
+        let minorColor = UIColor.label.withAlphaComponent(0.38)
 
         for i in firstIndex...lastIndex {
             let value = range.lowerBound + Double(i) * step
@@ -281,6 +289,7 @@ final class TickStripView: UIView {
             let y0 = centerY - h / 2
             let y1 = y0 + h
 
+            ctx.setStrokeColor((isMajor ? majorColor : minorColor).cgColor)
             ctx.setLineWidth(lineWidth)
             ctx.move(to: CGPoint(x: x, y: y0))
             ctx.addLine(to: CGPoint(x: x, y: y1))
