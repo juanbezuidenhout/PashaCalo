@@ -60,6 +60,7 @@
 		AA0000000000000000000088 /* OnboardingPaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000087 /* OnboardingPaceView.swift */; };
 		AA000000000000000000008A /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000089 /* Haptics.swift */; };
 		AA000000000000000000008C /* PressableStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000008B /* PressableStyle.swift */; };
+		AA000000000000000000008E /* OnboardingSimplerWayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000008D /* OnboardingSimplerWayView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -116,6 +117,7 @@
 		AA0000000000000000000087 /* OnboardingPaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPaceView.swift; sourceTree = "<group>"; };
 		AA0000000000000000000089 /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
 		AA000000000000000000008B /* PressableStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PressableStyle.swift; sourceTree = "<group>"; };
+		AA000000000000000000008D /* OnboardingSimplerWayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSimplerWayView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -267,6 +269,7 @@
 				AA0000000000000000000087 /* OnboardingPaceView.swift */,
 				AA0000000000000000000045 /* OnboardingPreviousAppView.swift */,
 				AA0000000000000000000047 /* OnboardingSelectionCard.swift */,
+				AA000000000000000000008D /* OnboardingSimplerWayView.swift */,
 			);
 			path = Onboarding;
 			sourceTree = "<group>";
@@ -475,6 +478,7 @@
 				AA0000000000000000000080 /* HorizontalRulerPicker.swift in Sources */,
 				AA000000000000000000008A /* Haptics.swift in Sources */,
 				AA000000000000000000008C /* PressableStyle.swift in Sources */,
+				AA000000000000000000008E /* OnboardingSimplerWayView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
