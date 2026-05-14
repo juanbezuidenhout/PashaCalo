@@ -4,22 +4,14 @@ struct OnboardingGoalWeightView: View {
     @EnvironmentObject private var data: OnboardingData
     let onNext: () -> Void
 
-    @State private var goalText: String = ""
+    @State private var goalWeightKg: Int = 60
 
-    private var goalValue: Double? {
-        let value = Double(goalText)
-        guard let value, value > 0 else { return nil }
-        return value
-    }
-
-    private var isValid: Bool {
-        goalValue != nil
-    }
+    private let goalRange: ClosedRange<Int> = 30...200
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             VStack(alignment: .leading, spacing: 8) {
-                Text("目標体重を教えてください")
+                Text("目標体重を入力してください")
                     .font(.custom("NotoSansJP-Bold", size: 26))
                     .foregroundStyle(Color("TextPrimary"))
                     .fixedSize(horizontal: false, vertical: true)
@@ -30,7 +22,8 @@ struct OnboardingGoalWeightView: View {
             }
             .padding(.top, 28)
 
-            inputRow
+            pickerSection
+                .padding(.top, 8)
 
             Spacer()
 
@@ -38,57 +31,61 @@ struct OnboardingGoalWeightView: View {
                 commit()
                 onNext()
             }
-            .disabled(!isValid)
-            .opacity(isValid ? 1.0 : 0.4)
             .padding(.bottom, 24)
         }
         .padding(.horizontal, 24)
         .onAppear { syncFromData() }
     }
 
-    private var inputRow: some View {
-        HStack(spacing: 12) {
-            Text("目標体重")
-                .font(.custom("NotoSansJP-SemiBold", size: 16))
-                .foregroundStyle(Color("TextPrimary"))
-                .frame(width: 88, alignment: .leading)
-
-            TextField("", text: $goalText)
-                .keyboardType(.decimalPad)
-                .font(.custom("NotoSansJP-Regular", size: 18))
-                .foregroundStyle(Color("TextPrimary"))
-                .multilineTextAlignment(.trailing)
-                .frame(maxWidth: .infinity)
-
-            Text("kg")
-                .font(.custom("NotoSansJP-Regular", size: 14))
-                .foregroundStyle(Color("TextSecondary"))
-                .frame(width: 32, alignment: .trailing)
+    private var pickerSection: some View {
+        wheelColumn(label: "目標体重") {
+            NativeWheelPicker(
+                selection: $goalWeightKg,
+                range: goalRange,
+                unit: "kg"
+            )
         }
-        .padding(.horizontal, 18)
-        .frame(height: 64)
-        .background(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(Color("CardBackground"))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(Color("BorderLight"), lineWidth: 1)
-        )
+        .frame(height: 280)
+    }
+
+    @ViewBuilder
+    private func wheelColumn<Picker: View>(
+        label: String,
+        @ViewBuilder picker: () -> Picker
+    ) -> some View {
+        VStack(spacing: 14) {
+            Text(label)
+                .font(.custom("NotoSansJP-Bold", size: 18))
+                .foregroundStyle(Color("TextPrimary"))
+
+            ZStack {
+                Capsule(style: .continuous)
+                    .fill(Color(.systemGray5))
+                    .frame(height: 40)
+                    .padding(.horizontal, 6)
+
+                picker()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            .frame(maxHeight: .infinity)
+        }
+        .frame(maxWidth: .infinity)
     }
 
     private func syncFromData() {
-        if data.goalWeightKg > 0 && goalText.isEmpty {
-            goalText = data.goalWeightKg.truncatingRemainder(dividingBy: 1) == 0
-                ? String(Int(data.goalWeightKg))
-                : String(data.goalWeightKg)
+        if data.goalWeightKg > 0 {
+            goalWeightKg = clamp(Int(data.goalWeightKg.rounded()), to: goalRange)
+        } else if data.weightKg > 0 {
+            goalWeightKg = clamp(Int(data.weightKg.rounded()), to: goalRange)
         }
     }
 
+    private func clamp(_ value: Int, to range: ClosedRange<Int>) -> Int {
+        min(max(value, range.lowerBound), range.upperBound)
+    }
+
     private func commit() {
-        if let goal = goalValue {
-            data.goalWeightKg = goal
-        }
+        data.goalWeightKg = Double(goalWeightKg)
     }
 }
 
