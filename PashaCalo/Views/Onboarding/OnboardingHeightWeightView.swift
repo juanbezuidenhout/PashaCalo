@@ -13,12 +13,12 @@ struct OnboardingHeightWeightView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             VStack(alignment: .leading, spacing: 8) {
-                Text("身長と体重を教えてください")
+                Text("身長と体重を入力してください")
                     .font(.custom("NotoSansJP-Bold", size: 26))
                     .foregroundStyle(Color("TextPrimary"))
                     .fixedSize(horizontal: false, vertical: true)
 
-                Text("目標kcalの計算に使います")
+                Text("目標カロリーの計算に使用します")
                     .font(.custom("NotoSansJP-Regular", size: 14))
                     .foregroundStyle(Color("TextSecondary"))
             }
