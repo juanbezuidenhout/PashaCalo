@@ -28,7 +28,7 @@ struct OnboardingGoalDirectionView: View {
                     .foregroundStyle(Color("TextPrimary"))
                     .fixedSize(horizontal: false, vertical: true)
 
-                Text("あなたに合ったカロリープランの作成に使用します")
+                Text("あなたに合ったカロリープランを作成します")
                     .font(.custom("NotoSansJP-Regular", size: 14))
                     .foregroundStyle(Color("TextSecondary"))
                     .fixedSize(horizontal: false, vertical: true)
