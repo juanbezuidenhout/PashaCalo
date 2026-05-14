@@ -205,13 +205,15 @@ Define these in `Colors.xcassets`:
 
 **Purpose:** Motivational interstitial. No data collected. Just builds belief.
 
-**Layout:**
-- Heading: `継続すれば、必ず結果が出ます`
-- Card with line graph:
-  - X axis: `1ヶ月目` → `6ヶ月目`
-  - Y axis: 体重 (kg)
-  - Line 1 (red shaded area, fluctuating): label `一般的なダイエット`
-  - Line 2 (solid black, steady downward): label `パシャカロ`
+**Layout (Cal AI–inspired premium chart):**
+- Heading: `続けるほど、変化が見えてくる`
+- Card (CardBackground, 24pt radius, no shadow) with a clean line graph (axes hidden):
+  - Card header: `体重` (bold)
+  - Bottom of card: `1ヶ月目` (left) and `6ヶ月目` (right) only — no other axis labels
+  - Faint dashed horizontal reference line in the middle
+  - Inline brand pill sitting on the reference line: small camera icon + `パシャカロ` + small black capsule containing `体重`
+  - Line 1 (smooth pink curve, `記録なし`): dips slightly then rebounds above starting weight. Soft pink linear-gradient area fill (fading in from left) under the rising portion. Pink `記録なし` label near the peak.
+  - Line 2 (smooth AccentBlack curve, `パシャカロ`): trends steadily downward. White-filled circle markers with AccentBlack stroke at the start and end of the line.
 - Subtext below card: `食習慣を記録して、長期的な変化を実感しましょう`
 - Button: `次へ`
 

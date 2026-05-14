@@ -187,14 +187,15 @@ You are continuing to build PashaCalo. Onboarding screens 1 to 5 exist.
 Build these 4 remaining onboarding screens and add them to OnboardingFlowView:
 
 --- OnboardingGraphView (step 6) ---
-This is a motivational interstitial. No data is collected.
-Heading: "継続すれば、必ず結果が出ます" — Bold 26pt
-A card (CardBackground, 16pt corner radius, soft shadow) containing a line chart:
-- X axis labels: "1ヶ月目" and "6ヶ月目"
-- Y axis label: "体重 (kg)" rotated 90 degrees, TextSecondary 11pt
-- Line 1: A red semi-transparent filled area that fluctuates up and down (simulate with a wavy path). Legend label: "一般的なダイエット"
-- Line 2: A solid AccentBlack line that trends steadily downward. Legend label: "パシャカロ"
-- Legend: two rows below the chart, each with a colored square (8pt) and label text
+This is a motivational interstitial. No data is collected. Visual reference: Cal AI's "Designed to help you stay on track" screen.
+Heading: "続けるほど、変化が見えてくる" — Bold 26pt
+A card (CardBackground, 24pt corner radius, no shadow) containing a line chart:
+- Card header: "体重" — Bold 20pt TextPrimary (top-left of card)
+- Axes hidden. Only "1ヶ月目" and "6ヶ月目" shown at the bottom corners of the card.
+- A faint dashed horizontal reference line in the middle of the chart.
+- On the dashed line (left side), an inline brand pill: small camera icon + "パシャカロ" + a small black capsule containing "体重".
+- Line 1 (記録なし): smooth catmullRom pink/red line that dips slightly then rebounds above the starting weight. A soft pink area fill (linear gradient fading in from left) sits between the reference line and the line where the line is above the reference. The label "記録なし" appears in pink near the rising portion of the line.
+- Line 2 (パシャカロ): smooth catmullRom AccentBlack line, slightly thicker, trending steadily downward. White-filled circles with a 2pt AccentBlack stroke mark the start (top-left) and end (bottom-right) of the line.
 Subtext below card: "食習慣を記録して、長期的な変化を実感しましょう" — Regular 14pt TextSecondary center aligned
 Button: "次へ"
 

@@ -6,44 +6,46 @@ struct OnboardingGraphView: View {
 
     private struct WeightPoint: Identifiable {
         let id = UUID()
-        let month: Int
+        let month: Double
         let weight: Double
-        let series: String
     }
 
-    private let generalDiet: [WeightPoint] = [
-        .init(month: 1, weight: 70.0, series: "一般的なダイエット"),
-        .init(month: 2, weight: 68.5, series: "一般的なダイエット"),
-        .init(month: 3, weight: 69.8, series: "一般的なダイエット"),
-        .init(month: 4, weight: 68.0, series: "一般的なダイエット"),
-        .init(month: 5, weight: 69.6, series: "一般的なダイエット"),
-        .init(month: 6, weight: 69.2, series: "一般的なダイエット")
-    ]
-
+    // パシャカロ: smooth, sustained drop from start to end
     private let pashaCalo: [WeightPoint] = [
-        .init(month: 1, weight: 70.0, series: "パシャカロ"),
-        .init(month: 2, weight: 68.6, series: "パシャカロ"),
-        .init(month: 3, weight: 67.0, series: "パシャカロ"),
-        .init(month: 4, weight: 65.5, series: "パシャカロ"),
-        .init(month: 5, weight: 64.1, series: "パシャカロ"),
-        .init(month: 6, weight: 62.8, series: "パシャカロ")
+        .init(month: 1.0, weight: 70.0),
+        .init(month: 1.6, weight: 69.0),
+        .init(month: 2.2, weight: 67.2),
+        .init(month: 2.8, weight: 64.6),
+        .init(month: 3.5, weight: 61.2),
+        .init(month: 4.2, weight: 58.0),
+        .init(month: 4.9, weight: 56.0),
+        .init(month: 5.5, weight: 55.2),
+        .init(month: 6.0, weight: 55.0)
     ]
 
-    private let generalDietColor = Color.red
+    // 記録なし: dips slightly, then rebounds above the starting weight
+    private let noTracking: [WeightPoint] = [
+        .init(month: 1.0, weight: 70.0),
+        .init(month: 1.6, weight: 68.6),
+        .init(month: 2.3, weight: 66.8),
+        .init(month: 3.0, weight: 65.6),
+        .init(month: 3.6, weight: 65.4),
+        .init(month: 4.2, weight: 66.8),
+        .init(month: 4.8, weight: 70.2),
+        .init(month: 5.4, weight: 74.0),
+        .init(month: 6.0, weight: 76.5)
+    ]
+
+    private let yMin: Double = 50.0
+    private let yMax: Double = 82.0
+    private let baselineWeight: Double = 65.0
+
     private var pashaCaloColor: Color { Color("AccentBlack") }
-
-    private let xAxisLabels: [Int: String] = [
-        1: "1ヶ月目",
-        2: "2ヶ月目",
-        3: "3ヶ月目",
-        4: "4ヶ月目",
-        5: "5ヶ月目",
-        6: "6ヶ月目"
-    ]
+    private let noTrackingColor = Color(red: 0.97, green: 0.42, blue: 0.45)
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
-            Text("継続すれば、必ず結果が出ます")
+            Text("続けるほど、変化が見えてくる")
                 .font(.custom("NotoSansJP-Bold", size: 26))
                 .foregroundStyle(Color("TextPrimary"))
                 .fixedSize(horizontal: false, vertical: true)
@@ -68,67 +70,128 @@ struct OnboardingGraphView: View {
     }
 
     private var chartCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("体重 (kg)")
-                .font(.custom("NotoSansJP-Regular", size: 11))
-                .foregroundStyle(Color("TextSecondary"))
+        VStack(alignment: .leading, spacing: 10) {
+            Text("体重")
+                .font(.custom("NotoSansJP-Bold", size: 20))
+                .foregroundStyle(Color("TextPrimary"))
+                .padding(.leading, 2)
+                .padding(.top, 4)
 
             chart
-                .frame(height: 220)
+                .frame(height: 230)
+                .padding(.top, 2)
 
-            legend
-                .padding(.top, 4)
+            HStack {
+                Text("1ヶ月目")
+                Spacer()
+                Text("6ヶ月目")
+            }
+            .font(.custom("NotoSansJP-Regular", size: 13))
+            .foregroundStyle(Color("TextSecondary"))
+            .padding(.horizontal, 2)
         }
-        .padding(18)
+        .padding(20)
         .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
                 .fill(Color("CardBackground"))
         )
-        .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 4)
     }
 
     @ViewBuilder
     private var chart: some View {
         if #available(iOS 16.0, *) {
             Chart {
-                ForEach(generalDiet) { point in
+                ForEach(noTracking) { point in
                     AreaMark(
                         x: .value("Month", point.month),
-                        y: .value("Weight", point.weight)
+                        yStart: .value("Baseline", baselineWeight),
+                        yEnd: .value("Weight", max(point.weight, baselineWeight))
                     )
-                    .foregroundStyle(generalDietColor.opacity(0.3))
+                    .foregroundStyle(
+                        LinearGradient(
+                            stops: [
+                                .init(color: noTrackingColor.opacity(0.0), location: 0.0),
+                                .init(color: noTrackingColor.opacity(0.08), location: 0.45),
+                                .init(color: noTrackingColor.opacity(0.32), location: 1.0)
+                            ],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .interpolationMethod(.catmullRom)
+                }
+
+                RuleMark(y: .value("Baseline", baselineWeight))
+                    .foregroundStyle(Color("TextSecondary").opacity(0.28))
+                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 4]))
+
+                ForEach(noTracking) { point in
+                    LineMark(
+                        x: .value("Month", point.month),
+                        y: .value("Weight", point.weight),
+                        series: .value("Series", "noTracking")
+                    )
+                    .foregroundStyle(noTrackingColor)
+                    .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round, lineJoin: .round))
                     .interpolationMethod(.catmullRom)
                 }
 
                 ForEach(pashaCalo) { point in
                     LineMark(
                         x: .value("Month", point.month),
-                        y: .value("Weight", point.weight)
+                        y: .value("Weight", point.weight),
+                        series: .value("Series", "pashaCalo")
                     )
                     .foregroundStyle(pashaCaloColor)
-                    .lineStyle(StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
+                    .lineStyle(StrokeStyle(lineWidth: 3.2, lineCap: .round, lineJoin: .round))
                     .interpolationMethod(.catmullRom)
                 }
-            }
-            .chartXAxis {
-                AxisMarks(values: Array(1...6)) { value in
-                    AxisGridLine()
-                    AxisTick()
-                    AxisValueLabel {
-                        if let month = value.as(Int.self), let label = xAxisLabels[month] {
-                            Text(label)
-                                .font(.custom("NotoSansJP-Regular", size: 10))
-                                .foregroundStyle(Color("TextSecondary"))
-                        }
-                    }
+
+                PointMark(
+                    x: .value("Month", 1.0),
+                    y: .value("Weight", 70.0)
+                )
+                .symbol {
+                    endpointDot
+                }
+
+                PointMark(
+                    x: .value("Month", 6.0),
+                    y: .value("Weight", 55.0)
+                )
+                .symbol {
+                    endpointDot
+                }
+
+                PointMark(
+                    x: .value("Anchor", 1.5),
+                    y: .value("Anchor", baselineWeight)
+                )
+                .symbolSize(0)
+                .annotation(position: .overlay, alignment: .leading, spacing: 0) {
+                    brandPill
+                        .padding(.leading, 2)
+                }
+
+                PointMark(
+                    x: .value("Anchor", 5.5),
+                    y: .value("Anchor", 73.6)
+                )
+                .symbolSize(0)
+                .annotation(position: .top, alignment: .trailing, spacing: 2) {
+                    Text("記録なし")
+                        .font(.custom("NotoSansJP-Bold", size: 12))
+                        .foregroundStyle(noTrackingColor)
+                        .padding(.trailing, 4)
                 }
             }
-            .chartYAxis {
-                AxisMarks(position: .leading) { _ in
-                    AxisGridLine()
-                    AxisTick()
-                    AxisValueLabel()
-                }
+            .chartXAxis(.hidden)
+            .chartYAxis(.hidden)
+            .chartXScale(domain: 1.0...6.0)
+            .chartYScale(domain: yMin...yMax)
+            .chartPlotStyle { plot in
+                plot.padding(.top, 8)
+                    .padding(.bottom, 4)
             }
         } else {
             Text("Chart requires iOS 16+")
@@ -138,23 +201,37 @@ struct OnboardingGraphView: View {
         }
     }
 
-    private var legend: some View {
-        HStack(spacing: 18) {
-            legendItem(color: generalDietColor.opacity(0.5), label: "一般的なダイエット")
-            legendItem(color: pashaCaloColor, label: "パシャカロ")
-            Spacer()
-        }
+    private var endpointDot: some View {
+        Circle()
+            .fill(Color("CardBackground"))
+            .frame(width: 13, height: 13)
+            .overlay(
+                Circle()
+                    .stroke(Color("TextPrimary"), lineWidth: 2)
+            )
     }
 
-    private func legendItem(color: Color, label: String) -> some View {
+    private var brandPill: some View {
         HStack(spacing: 6) {
-            RoundedRectangle(cornerRadius: 2, style: .continuous)
-                .fill(color)
-                .frame(width: 8, height: 8)
+            HStack(spacing: 4) {
+                Image(systemName: "camera.fill")
+                    .font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(Color("TextPrimary"))
 
-            Text(label)
-                .font(.custom("NotoSansJP-Regular", size: 12))
-                .foregroundStyle(Color("TextSecondary"))
+                Text("パシャカロ")
+                    .font(.custom("NotoSansJP-Bold", size: 12))
+                    .foregroundStyle(Color("TextPrimary"))
+            }
+
+            Text("体重")
+                .font(.custom("NotoSansJP-Bold", size: 11))
+                .foregroundStyle(.white)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 3)
+                .background(
+                    Capsule(style: .continuous)
+                        .fill(Color("AccentBlack"))
+                )
         }
     }
 }
