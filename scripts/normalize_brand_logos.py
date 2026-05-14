@@ -90,23 +90,33 @@ def build_youtube_icon(dst: Path) -> None:
     white-background YouTube icon would be invisible. Using YouTube's brand red
     as the icon fill keeps the visual weight consistent with the other icons
     (X black, Facebook blue, Instagram gradient, TikTok black, App Store blue).
+
+    Sized to match the other normalized logos: the red rounded square occupies
+    FILL_RATIO of the 1024x1024 canvas, with transparent margin so the visible
+    icon renders at the same size as Instagram / X / Facebook / etc.
     """
     youtube_red = (255, 0, 0, 255)
 
-    bg = Image.new("RGBA", (CANVAS, CANVAS), youtube_red)
-    mask = rounded_rect_mask(CANVAS)
-    canvas = Image.new("RGBA", (CANVAS, CANVAS), (0, 0, 0, 0))
-    canvas.paste(bg, (0, 0), mask)
+    inner = int(CANVAS * FILL_RATIO)
+    offset = (CANVAS - inner) // 2
 
-    # White play triangle, optically centered (slight rightward bias is normal
-    # in app icons, but we keep it visually centered for this small size).
+    bg_layer = Image.new("RGBA", (inner, inner), youtube_red)
+    mask = rounded_rect_mask(inner)
+
+    canvas = Image.new("RGBA", (CANVAS, CANVAS), (0, 0, 0, 0))
+    canvas.paste(bg_layer, (offset, offset), mask)
+
+    # White play triangle: wider than tall (right-pointing), centered inside
+    # the red square. Width ~36% of canvas, height ~30% — proportions taken
+    # from the official YouTube play button.
     draw = ImageDraw.Draw(canvas)
-    tri_w = int(CANVAS * 0.32)
-    tri_h = int(CANVAS * 0.36)
+    tri_w = int(CANVAS * 0.36)
+    tri_h = int(CANVAS * 0.30)
     cx = CANVAS // 2
     cy = CANVAS // 2
-    # Optical correction: shift triangle slightly right of geometric center.
-    optical_offset = int(CANVAS * 0.018)
+    # Optical correction: shift slightly right of geometric center so the
+    # triangle's centroid (at 1/3 from base) appears centered in the square.
+    optical_offset = int(CANVAS * 0.025)
     left = cx - tri_w // 2 + optical_offset
     right = left + tri_w
     top = cy - tri_h // 2
