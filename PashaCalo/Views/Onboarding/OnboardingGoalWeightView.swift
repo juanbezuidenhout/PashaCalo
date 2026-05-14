@@ -21,7 +21,7 @@ struct OnboardingGoalWeightView: View {
             Spacer(minLength: 0)
 
             VStack(spacing: 8) {
-                Text("体重を増やす")
+                Text(directionLabel)
                     .font(.custom("NotoSansJP-Regular", size: 16))
                     .foregroundStyle(Color("TextSecondary"))
 
@@ -64,6 +64,14 @@ struct OnboardingGoalWeightView: View {
 
     private var formattedValue: String {
         String(format: "%.1f kg", goalWeightKg)
+    }
+
+    private var directionLabel: String {
+        switch data.goalDirection {
+        case OnboardingData.GoalDirection.lose: return "体重を減らす"
+        case OnboardingData.GoalDirection.gain: return "体重を増やす"
+        default: return "目標体重"
+        }
     }
 
     /// BMI based on the user's stored height and the currently picked goal
@@ -127,8 +135,14 @@ struct OnboardingGoalWeightView: View {
             return
         }
 
-        if data.weightKg > 0 {
+        guard data.weightKg > 0 else { return }
+        switch data.goalDirection {
+        case OnboardingData.GoalDirection.lose:
+            goalWeightKg = clamp(data.weightKg - 5, to: goalRange)
+        case OnboardingData.GoalDirection.gain:
             goalWeightKg = clamp(data.weightKg + 5, to: goalRange)
+        default:
+            goalWeightKg = clamp(data.weightKg, to: goalRange)
         }
     }
 

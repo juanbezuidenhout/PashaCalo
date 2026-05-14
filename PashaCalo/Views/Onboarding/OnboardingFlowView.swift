@@ -5,7 +5,7 @@ struct OnboardingFlowView: View {
     @StateObject private var data = OnboardingData()
     @State private var step: Int = 1
 
-    private let totalSteps: Double = 11
+    private let totalSteps: Double = 12
 
     var body: some View {
         ZStack {
@@ -35,17 +35,20 @@ struct OnboardingFlowView: View {
                         OnboardingGoalDirectionView(onNext: advance)
                     case 9:
                         // Step 9 branches off the chosen goal direction:
-                        //   - maintain → ask which barriers are holding them back
-                        //   - gain     → pick a target weight on the ruler
-                        //   - lose     → skipped entirely in `advance()` below
+                        //   - maintain    → ask which barriers are holding them back
+                        //   - gain / lose → pick a target weight on the ruler
                         if data.goalDirection == OnboardingData.GoalDirection.maintain {
                             OnboardingBarriersView(onNext: advance)
                         } else {
                             OnboardingGoalWeightView(onNext: advance)
                         }
                     case 10:
-                        OnboardingDietView(onNext: advance)
+                        // Plan teaser — reached by every direction; the
+                        // headline adapts to lose / gain / maintain.
+                        OnboardingGoalPlanView(onNext: advance)
                     case 11:
+                        OnboardingDietView(onNext: advance)
+                    case 12:
                         OnboardingCompleteView()
                     default:
                         placeholder
@@ -91,13 +94,6 @@ struct OnboardingFlowView: View {
     }
 
     private func advance() {
-        // Users who picked "lose" don't need step 9 (neither the goal-weight
-        // wheel nor the barriers list), so jump straight to the diet step.
-        if step == 8, data.goalDirection == OnboardingData.GoalDirection.lose {
-            step = 10
-            return
-        }
-
         if step < Int(totalSteps) {
             step += 1
         } else {
