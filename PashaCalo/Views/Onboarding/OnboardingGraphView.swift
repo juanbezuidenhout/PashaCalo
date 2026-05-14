@@ -1,47 +1,13 @@
 import SwiftUI
-import Charts
 
 struct OnboardingGraphView: View {
     let onNext: () -> Void
 
-    private struct WeightPoint: Identifiable {
-        let id = UUID()
-        let month: Double
-        let weight: Double
-    }
-
-    // パシャカロ: smooth, sustained drop from start to end
-    private let pashaCalo: [WeightPoint] = [
-        .init(month: 1.0, weight: 70.0),
-        .init(month: 1.6, weight: 69.0),
-        .init(month: 2.2, weight: 67.2),
-        .init(month: 2.8, weight: 64.6),
-        .init(month: 3.5, weight: 61.2),
-        .init(month: 4.2, weight: 58.0),
-        .init(month: 4.9, weight: 56.0),
-        .init(month: 5.5, weight: 55.2),
-        .init(month: 6.0, weight: 55.0)
-    ]
-
-    // 記録なし: dips slightly, then rebounds above the starting weight
-    private let noTracking: [WeightPoint] = [
-        .init(month: 1.0, weight: 70.0),
-        .init(month: 1.6, weight: 68.6),
-        .init(month: 2.3, weight: 66.8),
-        .init(month: 3.0, weight: 65.6),
-        .init(month: 3.6, weight: 65.4),
-        .init(month: 4.2, weight: 66.8),
-        .init(month: 4.8, weight: 70.2),
-        .init(month: 5.4, weight: 74.0),
-        .init(month: 6.0, weight: 76.5)
-    ]
-
-    private let yMin: Double = 50.0
-    private let yMax: Double = 82.0
-    private let baselineWeight: Double = 65.0
-
     private var pashaCaloColor: Color { Color("AccentBlack") }
-    private let noTrackingColor = Color(red: 0.97, green: 0.42, blue: 0.45)
+    private let noTrackingColor = Color(red: 0.95, green: 0.36, blue: 0.38)
+    private let cardTint = Color(red: 0.95, green: 0.95, blue: 0.96)
+    private let dashedColor = Color(red: 0.78, green: 0.78, blue: 0.80)
+    private let labelGray = Color(red: 0.30, green: 0.30, blue: 0.32)
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
@@ -70,169 +36,221 @@ struct OnboardingGraphView: View {
     }
 
     private var chartCard: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 14) {
             Text("体重")
-                .font(.custom("NotoSansJP-Bold", size: 20))
+                .font(.custom("NotoSansJP-Bold", size: 22))
                 .foregroundStyle(Color("TextPrimary"))
                 .padding(.leading, 2)
                 .padding(.top, 4)
 
-            chart
-                .frame(height: 230)
-                .padding(.top, 2)
+            CalAIStyleChart(
+                pashaCaloColor: pashaCaloColor,
+                noTrackingColor: noTrackingColor,
+                cardColor: cardTint,
+                dashedColor: dashedColor,
+                labelGray: labelGray,
+                textPrimary: Color("TextPrimary")
+            )
+            .frame(height: 220)
 
             HStack {
                 Text("1ヶ月目")
                 Spacer()
                 Text("6ヶ月目")
             }
-            .font(.custom("NotoSansJP-Regular", size: 13))
-            .foregroundStyle(Color("TextSecondary"))
+            .font(.custom("NotoSansJP-Regular", size: 14))
+            .foregroundStyle(labelGray)
             .padding(.horizontal, 2)
         }
-        .padding(20)
+        .padding(22)
         .background(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .fill(Color("CardBackground"))
+            RoundedRectangle(cornerRadius: 26, style: .continuous)
+                .fill(cardTint)
+        )
+    }
+}
+
+// MARK: - Cal AI-style chart
+
+private struct CalAIStyleChart: View {
+    let pashaCaloColor: Color
+    let noTrackingColor: Color
+    let cardColor: Color
+    let dashedColor: Color
+    let labelGray: Color
+    let textPrimary: Color
+
+    // Normalized coordinates (0...1, y goes top→bottom).
+    private let startPoint = CGPoint(x: 0.04, y: 0.18)
+    private let endBlack = CGPoint(x: 0.96, y: 0.88)
+    private let endPink = CGPoint(x: 0.98, y: 0.04)
+
+    // The two dashed reference lines.
+    private let topDashedY: CGFloat = 0.18
+    private let midDashedY: CGFloat = 0.62
+
+    var body: some View {
+        GeometryReader { geo in
+            let size = geo.size
+            let topY = topDashedY * size.height
+            let midY = midDashedY * size.height
+
+            ZStack(alignment: .topLeading) {
+                pinkAreaFill(in: size)
+
+                dashedLine(width: size.width, y: topY)
+                dashedLine(width: size.width, y: midY)
+
+                pinkLinePath(in: size)
+                    .stroke(
+                        noTrackingColor,
+                        style: StrokeStyle(lineWidth: 2.6, lineCap: .round, lineJoin: .round)
+                    )
+
+                blackLinePath(in: size)
+                    .stroke(
+                        textPrimary,
+                        style: StrokeStyle(lineWidth: 3.2, lineCap: .round, lineJoin: .round)
+                    )
+
+                endpointDot
+                    .position(point(startPoint.x, startPoint.y, in: size))
+
+                endpointDot
+                    .position(point(endBlack.x, endBlack.y, in: size))
+
+                brandRow
+                    .position(x: 0.18 * size.width + 4, y: midY)
+
+                Text("記録なし")
+                    .font(.custom("NotoSansJP-Bold", size: 14))
+                    .foregroundStyle(labelGray)
+                    .position(x: 0.75 * size.width, y: 0.22 * size.height)
+            }
+        }
+    }
+
+    private func point(_ x: CGFloat, _ y: CGFloat, in size: CGSize) -> CGPoint {
+        CGPoint(x: x * size.width, y: y * size.height)
+    }
+
+    // MARK: Paths
+
+    private func blackLinePath(in size: CGSize) -> Path {
+        Path { path in
+            path.move(to: point(startPoint.x, startPoint.y, in: size))
+            // Stay nearly flat at the top, then curve down with an S
+            path.addCurve(
+                to: point(0.50, 0.52, in: size),
+                control1: point(0.22, 0.18, in: size),
+                control2: point(0.32, 0.30, in: size)
+            )
+            path.addCurve(
+                to: point(endBlack.x, endBlack.y, in: size),
+                control1: point(0.70, 0.74, in: size),
+                control2: point(0.84, 0.88, in: size)
+            )
+        }
+    }
+
+    private func pinkLinePath(in size: CGSize) -> Path {
+        Path { path in
+            path.move(to: point(startPoint.x, startPoint.y, in: size))
+            // Dip down deeper, stay low briefly, then sweep up sharply
+            path.addCurve(
+                to: point(0.38, 0.66, in: size),
+                control1: point(0.14, 0.32, in: size),
+                control2: point(0.24, 0.70, in: size)
+            )
+            path.addCurve(
+                to: point(endPink.x, endPink.y, in: size),
+                control1: point(0.58, 0.62, in: size),
+                control2: point(0.74, 0.10, in: size)
+            )
+        }
+    }
+
+    private func pinkAreaFill(in size: CGSize) -> some View {
+        // Fill from the pink line down, then mask to show only the portion
+        // above the TOP dashed line (the rebound zone), like Cal AI.
+        Path { path in
+            path.move(to: point(startPoint.x, startPoint.y, in: size))
+            path.addCurve(
+                to: point(0.38, 0.66, in: size),
+                control1: point(0.14, 0.32, in: size),
+                control2: point(0.24, 0.70, in: size)
+            )
+            path.addCurve(
+                to: point(endPink.x, endPink.y, in: size),
+                control1: point(0.58, 0.62, in: size),
+                control2: point(0.74, 0.10, in: size)
+            )
+            path.addLine(to: point(endPink.x, 1.0, in: size))
+            path.addLine(to: point(startPoint.x, 1.0, in: size))
+            path.closeSubpath()
+        }
+        .fill(
+            LinearGradient(
+                stops: [
+                    .init(color: noTrackingColor.opacity(0.0), location: 0.0),
+                    .init(color: noTrackingColor.opacity(0.04), location: 0.55),
+                    .init(color: noTrackingColor.opacity(0.28), location: 1.0)
+                ],
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+        )
+        .mask(
+            Rectangle()
+                .frame(width: size.width, height: topDashedY * size.height)
+                .frame(width: size.width, height: size.height, alignment: .top)
         )
     }
 
-    @ViewBuilder
-    private var chart: some View {
-        if #available(iOS 16.0, *) {
-            Chart {
-                ForEach(noTracking) { point in
-                    AreaMark(
-                        x: .value("Month", point.month),
-                        yStart: .value("Baseline", baselineWeight),
-                        yEnd: .value("Weight", max(point.weight, baselineWeight))
-                    )
-                    .foregroundStyle(
-                        LinearGradient(
-                            stops: [
-                                .init(color: noTrackingColor.opacity(0.0), location: 0.0),
-                                .init(color: noTrackingColor.opacity(0.08), location: 0.45),
-                                .init(color: noTrackingColor.opacity(0.32), location: 1.0)
-                            ],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .interpolationMethod(.catmullRom)
-                }
-
-                RuleMark(y: .value("Baseline", baselineWeight))
-                    .foregroundStyle(Color("TextSecondary").opacity(0.28))
-                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 4]))
-
-                ForEach(noTracking) { point in
-                    LineMark(
-                        x: .value("Month", point.month),
-                        y: .value("Weight", point.weight),
-                        series: .value("Series", "noTracking")
-                    )
-                    .foregroundStyle(noTrackingColor)
-                    .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round, lineJoin: .round))
-                    .interpolationMethod(.catmullRom)
-                }
-
-                ForEach(pashaCalo) { point in
-                    LineMark(
-                        x: .value("Month", point.month),
-                        y: .value("Weight", point.weight),
-                        series: .value("Series", "pashaCalo")
-                    )
-                    .foregroundStyle(pashaCaloColor)
-                    .lineStyle(StrokeStyle(lineWidth: 3.2, lineCap: .round, lineJoin: .round))
-                    .interpolationMethod(.catmullRom)
-                }
-
-                PointMark(
-                    x: .value("Month", 1.0),
-                    y: .value("Weight", 70.0)
-                )
-                .symbol {
-                    endpointDot
-                }
-
-                PointMark(
-                    x: .value("Month", 6.0),
-                    y: .value("Weight", 55.0)
-                )
-                .symbol {
-                    endpointDot
-                }
-
-                PointMark(
-                    x: .value("Anchor", 1.5),
-                    y: .value("Anchor", baselineWeight)
-                )
-                .symbolSize(0)
-                .annotation(position: .overlay, alignment: .leading, spacing: 0) {
-                    brandPill
-                        .padding(.leading, 2)
-                }
-
-                PointMark(
-                    x: .value("Anchor", 5.5),
-                    y: .value("Anchor", 73.6)
-                )
-                .symbolSize(0)
-                .annotation(position: .top, alignment: .trailing, spacing: 2) {
-                    Text("記録なし")
-                        .font(.custom("NotoSansJP-Bold", size: 12))
-                        .foregroundStyle(noTrackingColor)
-                        .padding(.trailing, 4)
-                }
-            }
-            .chartXAxis(.hidden)
-            .chartYAxis(.hidden)
-            .chartXScale(domain: 1.0...6.0)
-            .chartYScale(domain: yMin...yMax)
-            .chartPlotStyle { plot in
-                plot.padding(.top, 8)
-                    .padding(.bottom, 4)
-            }
-        } else {
-            Text("Chart requires iOS 16+")
-                .font(.custom("NotoSansJP-Regular", size: 14))
-                .foregroundStyle(Color("TextSecondary"))
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+    private func dashedLine(width: CGFloat, y: CGFloat) -> some View {
+        Path { path in
+            path.move(to: CGPoint(x: 0, y: y))
+            path.addLine(to: CGPoint(x: width, y: y))
         }
+        .stroke(
+            dashedColor,
+            style: StrokeStyle(lineWidth: 1, dash: [3, 4])
+        )
     }
+
+    // MARK: Components
 
     private var endpointDot: some View {
         Circle()
-            .fill(Color("CardBackground"))
-            .frame(width: 13, height: 13)
+            .fill(cardColor)
+            .frame(width: 14, height: 14)
             .overlay(
                 Circle()
-                    .stroke(Color("TextPrimary"), lineWidth: 2)
+                    .stroke(textPrimary, lineWidth: 2.2)
             )
     }
 
-    private var brandPill: some View {
+    private var brandRow: some View {
         HStack(spacing: 6) {
-            HStack(spacing: 4) {
-                Image(systemName: "camera.fill")
-                    .font(.system(size: 9, weight: .bold))
-                    .foregroundStyle(Color("TextPrimary"))
+            Image(systemName: "camera.fill")
+                .font(.system(size: 11, weight: .bold))
+                .foregroundStyle(textPrimary)
 
-                Text("パシャカロ")
-                    .font(.custom("NotoSansJP-Bold", size: 12))
-                    .foregroundStyle(Color("TextPrimary"))
-            }
+            Text("パシャカロ")
+                .font(.custom("NotoSansJP-Bold", size: 13))
+                .foregroundStyle(textPrimary)
 
             Text("体重")
-                .font(.custom("NotoSansJP-Bold", size: 11))
+                .font(.custom("NotoSansJP-Bold", size: 12))
                 .foregroundStyle(.white)
-                .padding(.horizontal, 8)
+                .padding(.horizontal, 9)
                 .padding(.vertical, 3)
                 .background(
                     Capsule(style: .continuous)
-                        .fill(Color("AccentBlack"))
+                        .fill(textPrimary)
                 )
         }
+        .fixedSize()
     }
 }
 
