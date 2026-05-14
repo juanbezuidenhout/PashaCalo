@@ -10,7 +10,7 @@ struct OnboardingGoalWeightView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("目標体重は？")
+            Text("目標体重を設定してください")
                 .font(.custom("NotoSansJP-Bold", size: 26))
                 .foregroundStyle(Color("TextPrimary"))
                 .fixedSize(horizontal: false, vertical: true)
