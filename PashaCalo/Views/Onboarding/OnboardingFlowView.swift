@@ -5,7 +5,7 @@ struct OnboardingFlowView: View {
     @StateObject private var data = OnboardingData()
     @State private var step: Int = 1
 
-    private let totalSteps: Double = 12
+    private let totalSteps: Double = 13
 
     var body: some View {
         ZStack {
@@ -47,8 +47,12 @@ struct OnboardingFlowView: View {
                         // headline adapts to lose / gain / maintain.
                         OnboardingGoalPlanView(onNext: advance)
                     case 11:
-                        OnboardingDietView(onNext: advance)
+                        // Pace picker — only applies to gain / lose. Maintain
+                        // users skip straight to diet in `advance()` below.
+                        OnboardingPaceView(onNext: advance)
                     case 12:
+                        OnboardingDietView(onNext: advance)
+                    case 13:
                         OnboardingCompleteView()
                     default:
                         placeholder
@@ -94,6 +98,13 @@ struct OnboardingFlowView: View {
     }
 
     private func advance() {
+        // The pace picker (step 11) only applies when the user is actively
+        // shifting their weight — maintain users skip it.
+        if step == 10, data.goalDirection == OnboardingData.GoalDirection.maintain {
+            step = 12
+            return
+        }
+
         if step < Int(totalSteps) {
             step += 1
         } else {

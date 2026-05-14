@@ -57,6 +57,7 @@
 		AA0000000000000000000082 /* OnboardingBarriersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000081 /* OnboardingBarriersView.swift */; };
 		AA0000000000000000000084 /* OnboardingDietView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000083 /* OnboardingDietView.swift */; };
 		AA0000000000000000000086 /* OnboardingGoalPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000085 /* OnboardingGoalPlanView.swift */; };
+		AA0000000000000000000088 /* OnboardingPaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000087 /* OnboardingPaceView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -110,6 +111,7 @@
 		AA0000000000000000000081 /* OnboardingBarriersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingBarriersView.swift; sourceTree = "<group>"; };
 		AA0000000000000000000083 /* OnboardingDietView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingDietView.swift; sourceTree = "<group>"; };
 		AA0000000000000000000085 /* OnboardingGoalPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingGoalPlanView.swift; sourceTree = "<group>"; };
+		AA0000000000000000000087 /* OnboardingPaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPaceView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -256,6 +258,7 @@
 				AA000000000000000000003F /* OnboardingGoalWeightView.swift */,
 				AA0000000000000000000041 /* OnboardingGraphView.swift */,
 				AA0000000000000000000043 /* OnboardingHeightWeightView.swift */,
+				AA0000000000000000000087 /* OnboardingPaceView.swift */,
 				AA0000000000000000000045 /* OnboardingPreviousAppView.swift */,
 				AA0000000000000000000047 /* OnboardingSelectionCard.swift */,
 			);
@@ -442,6 +445,7 @@
 				AA0000000000000000000038 /* OnboardingData.swift in Sources */,
 				AA0000000000000000000084 /* OnboardingDietView.swift in Sources */,
 				AA0000000000000000000086 /* OnboardingGoalPlanView.swift in Sources */,
+				AA0000000000000000000088 /* OnboardingPaceView.swift in Sources */,
 				AA000000000000000000003A /* OnboardingDiscoveryView.swift in Sources */,
 				AA000000000000000000003C /* OnboardingFlowView.swift in Sources */,
 				AA000000000000000000003E /* OnboardingGenderView.swift in Sources */,
